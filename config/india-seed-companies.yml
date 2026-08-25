@@ -1,0 +1,354 @@
+# India-hiring seed list — PRD v2 §B3 (Tier 2, ATS-direct)
+#
+# Input for:  node discover-ats.mjs --in config/india-seed-companies.yml [--write]
+# Wrapper:    npm run seed:india          (preview)
+#             npm run seed:india:write    (append resolved tenants to portals.yml)
+#
+# WHY THIS TIER IS THE BACKBONE
+#
+# Naukri, LinkedIn and Indeed listings overwhelmingly point back to a posting
+# hosted on Greenhouse, Lever, Ashby, Workday or SmartRecruiters — all of which
+# career-ops already supports and all of which are company-agnostic. Indian
+# postings are therefore already reachable without a single new scraper. What is
+# missing is not a provider; it is a list of which companies to ask. That list
+# is this file.
+#
+# HOW TO GROW IT — the highest-leverage habit in the whole system
+#
+# Every time a LinkedIn or Naukri browse turns up a company not listed here, add
+# it and re-run the wrapper. One manual sighting converts into permanent
+# automated coverage of every future opening at that company. See
+# `npm run add-company -- <url-or-name>` for the one-command version, and
+# PRD §B6 for why that path is manual by design.
+#
+# SHAPE
+#
+#   - name: Acme                      # probed against every vendor, in order
+#   - name: Acme
+#     slug: acme-inc                  # explicit slug (camelCase Ashby boards)
+#   - name: Acme
+#     website: acme.com               # surfaced when unresolved, for follow-up
+#   - name: Acme
+#     workday: https://acme.wd3.myworkdayjobs.com/External   # full careers URL
+#   - name: Acme
+#     workday: { tenant: acme, site: External }              # or coordinates
+#
+# A company that does not resolve is NOT a failure — it is the Tier 3 input
+# (PRD §B4: Firecrawl, scoped to seed-list domains with no detected ATS). Record
+# the outcome in docs/india-sources.md either way.
+
+companies:
+  # ── Bucket 1: Indian product companies ────────────────────────────────────
+  # The core of the search. Product is the business, so roadmap ownership is
+  # real and the GCC/product classification resolves to `product` cleanly.
+  - name: Zoho
+    website: zoho.com
+  - name: Freshworks
+    website: freshworks.com
+  - name: Postman
+    website: postman.com
+  - name: Razorpay
+    website: razorpay.com
+  - name: Zerodha
+    website: zerodha.com
+  - name: Meesho
+    website: meesho.com
+  - name: CRED
+    website: cred.club
+  - name: Swiggy
+    website: swiggy.com
+  - name: Zepto
+    website: zeptonow.com
+  - name: PhonePe
+    website: phonepe.com
+  - name: Paytm
+    website: paytm.com
+  - name: Groww
+    website: groww.in
+  - name: Zoho Corporation
+    website: zohocorp.com
+  - name: Chargebee
+    website: chargebee.com
+  - name: BrowserStack
+    website: browserstack.com
+  - name: Hasura
+    website: hasura.io
+  - name: Zeta
+    website: zeta.tech
+  - name: Juspay
+    website: juspay.in
+  - name: Setu
+    website: setu.co
+  - name: M2P Fintech
+    website: m2pfintech.com
+  - name: Darwinbox
+    website: darwinbox.com
+  - name: Icertis
+    website: icertis.com
+  - name: MoEngage
+    website: moengage.com
+  - name: WebEngage
+    website: webengage.com
+  - name: Clevertap
+    website: clevertap.com
+  - name: Whatfix
+    website: whatfix.com
+  - name: Innovaccer
+    website: innovaccer.com
+  - name: Locus
+    website: locus.sh
+  - name: Delhivery
+    website: delhivery.com
+  - name: FarEye
+    website: fareye.com
+  - name: Shiprocket
+    website: shiprocket.in
+  - name: Zetwerk
+    website: zetwerk.com
+  - name: Udaan
+    website: udaan.com
+  - name: Ninjacart
+    website: ninjacart.in
+  - name: Lendingkart
+    website: lendingkart.com
+  - name: Perfios
+    website: perfios.com
+  - name: Signzy
+    website: signzy.com
+  - name: Yellow.ai
+    website: yellow.ai
+  - name: Gupshup
+    website: gupshup.io
+  - name: Exotel
+    website: exotel.com
+  - name: Netcore Cloud
+    website: netcorecloud.com
+  - name: Amagi
+    website: amagi.com
+  - name: Uniphore
+    website: uniphore.com
+  - name: Mindtickle
+    website: mindtickle.com
+  - name: LeadSquared
+    website: leadsquared.com
+  - name: Kissflow
+    website: kissflow.com
+  - name: Zolve
+    website: zolve.com
+  - name: Jupiter
+    website: jupiter.money
+  - name: Slice
+    website: sliceit.com
+  - name: KreditBee
+    website: kreditbee.in
+
+  # ── Bucket 2: AI-native startups ──────────────────────────────────────────
+  # One strong lane, not the whole search (PRD §A1.1). Listed for coverage, not
+  # priority — the rubric decides.
+  - name: Sarvam AI
+    website: sarvam.ai
+  - name: Krutrim
+    website: olakrutrim.com
+  - name: Observe.AI
+    website: observe.ai
+  - name: Fractal Analytics
+    website: fractal.ai
+  - name: Haptik
+    website: haptik.ai
+  - name: Mad Street Den
+    website: madstreetden.com
+  - name: SigTuple
+    website: sigtuple.com
+  - name: Wadhwani AI
+    website: wadhwaniai.org
+  - name: Niramai
+    website: niramai.com
+  - name: Vernacular.ai
+    website: vernacular.ai
+  - name: Rocketium
+    website: rocketium.com
+  - name: Eightfold AI
+    website: eightfold.ai
+  - name: Entropik
+    website: entropik.io
+  - name: Skit.ai
+    website: skit.ai
+
+  # ── Bucket 3: Global product companies with India PM hiring ───────────────
+  # Product companies whose India seats carry genuine product scope. The rubric
+  # still has to check that per posting — a global logo does not guarantee it.
+  - name: Atlassian
+    website: atlassian.com
+  - name: Stripe
+    website: stripe.com
+  - name: Databricks
+    website: databricks.com
+  - name: Snowflake
+    website: snowflake.com
+  - name: Salesforce
+    website: salesforce.com
+  - name: Adobe
+    website: adobe.com
+  - name: Autodesk
+    website: autodesk.com
+  - name: Twilio
+    website: twilio.com
+  - name: HubSpot
+    website: hubspot.com
+  - name: Zendesk
+    website: zendesk.com
+  - name: Confluent
+    website: confluent.io
+  - name: MongoDB
+    website: mongodb.com
+  - name: Elastic
+    website: elastic.co
+  - name: GitLab
+    website: gitlab.com
+  - name: Cloudflare
+    website: cloudflare.com
+  - name: Okta
+    website: okta.com
+  - name: ServiceNow
+    website: servicenow.com
+  - name: Workday
+    website: workday.com
+  - name: Coupa
+    website: coupa.com
+  - name: Blue Yonder
+    website: blueyonder.com
+  - name: o9 Solutions
+    website: o9solutions.com
+  - name: Kinaxis
+    website: kinaxis.com
+  - name: Manhattan Associates
+    website: manh.com
+  - name: E2open
+    website: e2open.com
+  - name: Celonis
+    website: celonis.com
+  - name: UiPath
+    website: uipath.com
+  - name: Boomi
+    website: boomi.com
+  - name: MuleSoft
+    website: mulesoft.com
+  - name: Talend
+    website: talend.com
+  - name: Informatica
+    website: informatica.com
+  - name: Teradata
+    website: teradata.com
+  - name: Tableau
+    website: tableau.com
+  - name: Qlik
+    website: qlik.com
+  - name: ThoughtSpot
+    website: thoughtspot.com
+  - name: Sprinklr
+    website: sprinklr.com
+  - name: Nutanix
+    website: nutanix.com
+  - name: Rubrik
+    website: rubrik.com
+  - name: Netskope
+    website: netskope.com
+  - name: Zscaler
+    website: zscaler.com
+  - name: Palo Alto Networks
+    website: paloaltonetworks.com
+
+  # ── Bucket 4: GCCs with genuine product charters ──────────────────────────
+  # Included ON PURPOSE. A strong GCC platform role can outrank a weak startup
+  # role, so these are surfaced and LABELLED, never filtered out (PRD §A1.3).
+  # The `company_type` dimension does the discriminating, per posting.
+  - name: Walmart Global Tech India
+    website: walmartglobaltech.com
+  - name: Target India
+    website: india.target.com
+  - name: Lowe's India
+    website: lowes.co.in
+  - name: Wayfair India
+    website: wayfair.com
+  - name: Tesco Bengaluru
+    website: tesco.com
+  - name: Maersk Global Service Centres
+    website: maersk.com
+  - name: Shell India
+    website: shell.in
+  - name: Bosch India
+    website: bosch.in
+  - name: Siemens India
+    website: siemens.co.in
+  - name: Philips Innovation Campus
+    website: philips.co.in
+  - name: Schneider Electric India
+    website: se.com
+  - name: Honeywell India
+    website: honeywell.com
+  - name: Caterpillar India
+    website: caterpillar.com
+  - name: John Deere India
+    website: deere.co.in
+  - name: Cummins India
+    website: cummins.com
+  - name: Emerson India
+    website: emerson.com
+  - name: Rockwell Automation India
+    website: rockwellautomation.com
+  - name: ABB India
+    website: abb.com
+  - name: Ericsson India
+    website: ericsson.com
+  - name: Nokia India
+    website: nokia.com
+  - name: Qualcomm India
+    website: qualcomm.com
+  - name: Micron India
+    website: micron.com
+  - name: Applied Materials India
+    website: appliedmaterials.com
+  - name: Visa India
+    website: visa.co.in
+  - name: Mastercard India
+    website: mastercard.com
+  - name: PayPal India
+    website: paypal.com
+  - name: American Express India
+    website: americanexpress.com
+  - name: Goldman Sachs India
+    website: goldmansachs.com
+  - name: Wells Fargo India
+    website: wellsfargo.com
+  - name: JPMorgan Chase India
+    website: jpmorganchase.com
+  - name: Barclays India
+    website: barclays.in
+  - name: HSBC India
+    website: hsbc.co.in
+  - name: Standard Chartered GBS
+    website: sc.com
+  - name: UnitedHealth Group India
+    website: unitedhealthgroup.com
+  - name: Optum India
+    website: optum.in
+  - name: CVS Health India
+    website: cvshealth.com
+  - name: Cigna India
+    website: cigna.com
+  - name: Novo Nordisk GBS
+    website: novonordisk.com
+  - name: AstraZeneca India
+    website: astrazeneca.com
+  - name: Rakuten India
+    website: rakuten.in
+  - name: Airbus India
+    website: airbus.com
+  - name: Dyson India
+    website: dyson.in
+  - name: Unilever India (UniOps)
+    website: unilever.com
+  - name: Procter & Gamble India
+    website: in.pg.com
+  - name: Colgate-Palmolive India
+    website: colgatepalmolive.co.in

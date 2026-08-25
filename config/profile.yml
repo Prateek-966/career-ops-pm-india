@@ -1,0 +1,193 @@
+# Career-Ops Profile — PM Edition, India-first (PRD v2)
+#
+# Single source of truth for personal data across all modes.
+#
+# ⚠️ IDENTITY FIELDS ARE PLACEHOLDERS. The PRD supplies the targeting layer
+# (target_roles, narrative, markets); it does not supply the candidate's
+# contact details. Fill the `candidate:` block and `cv.md` before running any
+# mode that renders a CV or a cover letter — `node doctor.mjs` reports both.
+
+candidate:
+  full_name: "TODO — your full name"
+  email: "nonuprateek1996@gmail.com"
+  phone: "TODO — +91-..."
+  wechat: ""
+  location: "Pune, Maharashtra, India"
+  linkedin: "TODO — linkedin.com/in/..."
+  portfolio_url: ""
+  github: ""
+  twitter: ""
+  # Empty on purpose: India/UK/US ATS pipelines penalise photos.
+  photo: ""
+  photo_style: rounded
+
+# ---------------------------------------------------------------------------
+# PRD A1.1 — Profile and title taxonomy
+#
+# Scoping principle: the target is ANY PM role the CV fits, not AI PM
+# specifically. AI/GenAI is one strong lane among several and the most crowded
+# one. The differentiated combination — enterprise B2B, supply chain/SCM, data
+# products, API-first platforms, multi-market telco delivery — opens a wider
+# surface, and in several of those lanes this is a rarer profile than in AI PM.
+#
+# The archetype ladder below is a SCORING AID, not a gate. A PM role in a
+# domain absent from this list still reaches the rubric and is judged on
+# transferable evidence (see modes/_custom.md → Domain fit / Transferability).
+# ---------------------------------------------------------------------------
+target_roles:
+  primary:
+    - "Senior Product Manager"
+    - "Principal Product Manager"
+    - "Lead Product Manager"
+  archetypes:
+    # Primary — direct, evidenced fit
+    - name: "Platform / API Product Manager"
+      level: "Senior/Principal"
+      fit: "primary"
+    - name: "Data Product Manager"
+      level: "Senior/Principal"
+      fit: "primary"
+    - name: "Supply Chain / SCM Product Manager"
+      level: "Senior/Principal"
+      fit: "primary"
+    - name: "AI/ML Product Manager"
+      level: "Senior/Principal"
+      fit: "primary"
+    - name: "Enterprise B2B SaaS Product Manager"
+      level: "Senior/Principal"
+      fit: "primary"
+    # Secondary — strong adjacent fit, transferable evidence
+    - name: "Integration / iPaaS Product Manager"
+      level: "Senior"
+      fit: "secondary"
+    - name: "ERP / Business Systems Product Manager"
+      level: "Senior"
+      fit: "secondary"
+    - name: "Telco / OSS-BSS Product Manager"
+      level: "Senior"
+      fit: "secondary"
+    - name: "Analytics / BI Product Manager"
+      level: "Senior"
+      fit: "secondary"
+    # Adjacent — stretch or sideways, still worth surfacing
+    - name: "Internal / Developer Platform Product Manager"
+      level: "Senior"
+      fit: "adjacent"
+    - name: "Technical Program Manager"
+      level: "Senior"
+      fit: "adjacent"
+    - name: "Product Operations / Product Strategy"
+      level: "Senior"
+      fit: "adjacent"
+
+narrative:
+  headline: "Enterprise B2B PM — data platforms, API-first systems, supply chain products"
+  exit_story: "TODO — one line on why you are moving, in your own words."
+  superpowers:
+    - "API-first platform strategy in enterprise environments"
+    - "Supply chain and data products at multi-market scale"
+    - "Shipping LLM products into enterprise workflows"
+    - "Migrating and modernising business-critical systems"
+  # PRD A1.4 — proof points must be OUTCOME-shaped (adoption, revenue, cost
+  # saved, cycle time, decisions influenced), never an engineering-stack list.
+  # These seed match-star.mjs and the CV summary. Replace with your own; the
+  # hero_metric is the part that does the work.
+  proof_points:
+    - name: "TODO — platform/API programme"
+      url: ""
+      hero_metric: "TODO — e.g. 'Partner integration time 6 weeks → 5 days'"
+    - name: "TODO — supply chain / data product"
+      url: ""
+      hero_metric: "TODO — e.g. 'Forecast accuracy +11pp across 4 markets'"
+
+compensation:
+  target_range: ""
+  currency: "INR"
+  minimum: ""
+  location_flexibility: "Pune/Bengaluru hybrid, or remote-India; open to UK/EU and Gulf relocation"
+
+location:
+  country: "India"
+  city: "Pune"
+  timezone: "IST"
+  visa_status: "Indian citizen — no sponsorship needed in India"
+  authorized_in: ["India"]
+  # UK/EU and Gulf roles need sponsorship; see `markets:` below for the
+  # per-market flag the evaluation actually reads.
+  needs_sponsorship: true
+
+# ---------------------------------------------------------------------------
+# PRD B7 — Multi-market handling
+#
+# A market id is assigned by normalizing a posting's free-text location (see
+# market-map.mjs, which owns the patterns and is mirrored into web/). An
+# unmatched location becomes `unknown` and is SURFACED, never dropped — a role
+# whose location string this file has not seen yet is still a real role.
+#
+# `currency` is the market's native currency. Compensation is stored and scored
+# in its NATIVE currency and is never auto-converted: an INR equivalent may be
+# shown as secondary context with its rate date visible, but silent FX inside a
+# fit score is a correctness bug, so no scoring path may convert.
+# ---------------------------------------------------------------------------
+markets:
+  india:
+    label: "India"
+    currency: "INR"
+    visa_required: false
+    locations:
+      - "Bengaluru"
+      - "Pune"
+      - "Hyderabad"
+      - "Mumbai"
+      - "Delhi NCR"
+      - "Chennai"
+      - "Remote - India"
+  uk_eu:
+    label: "UK / EU"
+    currency: "GBP"
+    visa_required: true
+    locations:
+      - "London"
+      - "Manchester"
+      - "Dublin"
+      - "Amsterdam"
+      - "Berlin"
+      - "Remote - EU"
+  gulf:
+    label: "Gulf"
+    currency: "AED"
+    visa_required: true
+    locations:
+      - "Dubai"
+      - "Abu Dhabi"
+      - "Riyadh"
+      - "Doha"
+
+# Optional secondary display only — never used for scoring (see markets note).
+# Refresh the rate and the date together, or delete the block: PRD Part C says
+# "no rate available means show nothing, not a stale figure".
+fx_reference:
+  as_of: "2026-08-25"
+  # Units of the market currency per 1 INR equivalent is ambiguous, so store the
+  # plain direction: 1 unit of `currency` = `inr` rupees.
+  rates:
+    - currency: "USD"
+      inr: 87.5
+    - currency: "GBP"
+      inr: 112.0
+    - currency: "EUR"
+      inr: 95.0
+    - currency: "AED"
+      inr: 23.8
+
+language:
+  output: en
+
+spend_tier: standard
+
+cv:
+  output_format: "html"
+
+cover_letter:
+  notice_period_days: 60
+  primary_domain: "enterprise B2B software"

@@ -156,3 +156,17 @@ documents/*
 # Intake fingerprints — the recorded source filenames may themselves carry
 # PII (e.g. cv/jane-doe-master-cv.pdf). #1723
 data/intake-state.json
+
+# ── Job-finder fork: the PM/India configuration IS the deliverable ──────────
+#
+# Upstream gitignores these because career-ops is a public template repo where
+# a user's private targeting config should not be committed. This fork is the
+# opposite case: it is one person's checkout, and config/profile.yml,
+# portals.yml and modes/_custom.md carry the PRD v2 work itself (the PM
+# archetype ladder, the broad-positive title filter, the GCC rubric). Ignored,
+# they would be lost on every fresh clone and the fork would build to nothing.
+#
+# cv.md stays ignored — that one is genuinely personal data, not configuration.
+!config/profile.yml
+!portals.yml
+!modes/_custom.md

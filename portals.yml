@@ -1,0 +1,184 @@
+# Portal Scanner Configuration — PM Edition, India-first (PRD v2)
+#
+# Consumed by `npm run scan` (scan.mjs) and `npm run scan:full`
+# (scan-ats-full.mjs). Compiled by title-keywords.mjs.
+#
+# ── Filter architecture: broad positives, strong negatives, rubric decides ──
+#
+# Title filtering is cheap and runs at scan time. Evaluation is expensive and
+# runs per posting. So the title filter admits the FULL PM surface and rejects
+# only genuine non-PM roles; the rubric in modes/_custom.md does the ranking.
+#
+# A narrow title filter silently removes roles that would have scored well —
+# the worst failure mode in the system, because it is invisible. The scan
+# summary reports one "filtered by title" count and cannot tell a well-tuned
+# filter from a leaking one.
+#
+# tracked_companies is populated by discovery, not by hand:
+#     npm run seed:india          # preview what would be added
+#     npm run seed:india:write    # append resolved tenants
+#     npm run validate:portals && npm run verify:portals
+#
+# See config/india-seed-companies.yml for the seed list and why it is the
+# backbone of coverage (PRD §B3).
+
+title_filter:
+  # Deliberately broad. Every entry here is a PM role shape, not a domain.
+  #
+  # DO NOT add domain keywords (`ai`, `data`, `supply chain`) to this list.
+  # Domain fit is a RUBRIC dimension, not a title filter — a "Senior Product
+  # Manager" title at a supply chain company carries no domain word at all, and
+  # a domain-gated positive list would drop it in silence.
+  positive:
+    - "product manager"
+    - "product management"
+    - "product owner"
+    - "product lead"
+    - "principal product"
+    - "group product"
+    - "head of product"
+    - "director of product"
+    - "director, product"
+    # Whole-word: a bare "pm" would match PMO, PMP, and every "…pm…" inside a
+    # longer word. See title-keywords.mjs → WORD_PREFIX.
+    - "word:pm"
+    - "technical program manager"
+    - "product strategy"
+
+  negative:
+    - "word:intern"
+    - "word:interns"
+    - "internship"
+    - "trainee"
+    # The highest-volume false positive in any PM search, and a different
+    # discipline entirely. Filtered at the title layer so it never consumes
+    # evaluation tokens — PRD's "zero product-marketing roles reaching
+    # evaluation" acceptance criterion is enforced by exactly this line.
+    - "product marketing"
+    - "product designer"
+    - "product engineer"
+    - "product support"
+    - "product specialist"
+    - "assistant product"
+    # Sub-baseline for 8+ years of experience. role-matcher.mjs treats
+    # "associate" as sub-baseline seniority for the same reason.
+    - "associate product"
+
+# ── Location filter ─────────────────────────────────────────────────────────
+#
+# Scoped to the three markets in config/profile.yml → `markets:`. This is a
+# SCAN-time coarse filter on a free-text string; the authoritative market id is
+# assigned later by market-map.mjs, which handles the spelling variants
+# ("Bangalore"/"Bengaluru") and the decorated forms ("Pune (Hybrid)").
+#
+# `always_allow` is checked before `block` and rescues multi-location postings
+# that name a home-market city — "Bengaluru or Singapore" passes on Bengaluru.
+location_filter:
+  always_allow:
+    - "India"
+    - "Bengaluru"
+    - "Bangalore"
+    - "Pune"
+    - "Hyderabad"
+    - "Mumbai"
+    - "Delhi"
+    - "Gurugram"
+    - "Gurgaon"
+    - "Noida"
+    - "Chennai"
+  allow:
+    - "Remote"
+    - "India"
+    - "Bengaluru"
+    - "Bangalore"
+    - "Pune"
+    - "Hyderabad"
+    - "Mumbai"
+    - "Delhi"
+    - "Gurugram"
+    - "Gurgaon"
+    - "Noida"
+    - "Chennai"
+    - "Kolkata"
+    - "Ahmedabad"
+    - "Kochi"
+    - "Coimbatore"
+    - "Chandigarh"
+    - "Jaipur"
+    - "Indore"
+    # Secondary markets — see config/profile.yml `markets:`. Kept in `allow`
+    # rather than a separate list so one scan covers all three and the market
+    # filter in the UI does the separating.
+    - "United Kingdom"
+    - "London"
+    - "Manchester"
+    - "Dublin"
+    - "Ireland"
+    - "Amsterdam"
+    - "Netherlands"
+    - "Berlin"
+    - "Germany"
+    - "Dubai"
+    - "Abu Dhabi"
+    - "United Arab Emirates"
+    - "UAE"
+    - "Riyadh"
+    - "Saudi"
+    - "Doha"
+    - "Qatar"
+
+# ── Broad-discovery search queries ──────────────────────────────────────────
+#
+# WebSearch fallback (strategy level 3). Lower precision than the ATS tier by
+# design: the rubric is what separates a strong enterprise platform role from
+# noise, so a domain-keyword-only query set would never surface the
+# domain-neutral titles that matter most here.
+search_queries:
+  - name: Greenhouse — PM India
+    query: 'site:boards.greenhouse.io OR site:job-boards.greenhouse.io "Product Manager" (India OR Bengaluru OR Bangalore OR Pune OR Hyderabad)'
+    enabled: true
+
+  - name: Lever — PM India
+    query: 'site:jobs.lever.co "Product Manager" (India OR Bengaluru OR Bangalore OR Pune OR Hyderabad)'
+    enabled: true
+
+  - name: Ashby — PM India
+    query: 'site:jobs.ashbyhq.com "Product Manager" (India OR Bengaluru OR Bangalore OR Pune OR Hyderabad)'
+    enabled: true
+
+  - name: Greenhouse — Platform / API PM
+    query: 'site:boards.greenhouse.io OR site:job-boards.greenhouse.io ("Platform Product Manager" OR "API Product Manager") India'
+    enabled: true
+
+  - name: Greenhouse — Data PM
+    query: 'site:boards.greenhouse.io OR site:job-boards.greenhouse.io ("Data Product Manager" OR "Analytics Product Manager") India'
+    enabled: true
+
+  - name: Lever — Supply chain PM
+    query: 'site:jobs.lever.co ("Supply Chain Product Manager" OR "SCM Product Manager" OR "Logistics Product Manager") India'
+    enabled: true
+
+  - name: Ashby — Enterprise B2B PM
+    query: 'site:jobs.ashbyhq.com ("Enterprise Product Manager" OR "B2B Product Manager") India'
+    enabled: true
+
+  - name: SmartRecruiters — PM India
+    query: 'site:jobs.smartrecruiters.com "Product Manager" India'
+    enabled: true
+
+  - name: Workday — PM India
+    query: 'site:myworkdayjobs.com "Product Manager" (India OR Bengaluru OR Pune OR Hyderabad)'
+    enabled: true
+
+# ── ATS tenants (Tier 2 — the highest-quality tier) ─────────────────────────
+#
+# Populated by `npm run seed:india:write`, which runs discover-ats.mjs over
+# config/india-seed-companies.yml and appends the tenants it RESOLVES. Entries
+# are appended below this marker; the list starts empty on a fresh checkout so
+# that an unverified guess at a tenant slug can never enter the scan.
+#
+# After seeding, always run:
+#     npm run validate:portals && npm run verify:portals
+#
+# verify:portals probes each board and is what turns "seeded" into "verified".
+tracked_companies: []
