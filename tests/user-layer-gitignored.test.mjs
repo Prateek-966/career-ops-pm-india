@@ -55,7 +55,67 @@ function isSymlink(rel) {
   }
 }
 
+/**
+ * Paths this fork has DELIBERATELY chosen to commit, with the reason for each.
+ *
+ * Upstream career-ops is a public template repo, where every user-layer file
+ * must be ignored — a fork owner's `git add .` would otherwise publish their
+ * CV. Job-finder is a private single-person repo, where a gitignored file
+ * simply does not survive a fresh clone, and the setup has to be rebuilt by
+ * hand every time.
+ *
+ * Rather than quietly dropping paths off .gitignore and letting this test rot
+ * into a permanently-red or permanently-weakened state, the exception is
+ * declared in config/committed-user-layer.yml and reported here on every run
+ * as a WARNING naming the reason. Warnings are the right register: the trade is
+ * legitimate but it is not free, and it should stay in view rather than being
+ * forgotten inside a .gitignore diff.
+ *
+ * Everything not declared there is still hard-failed exactly as before.
+ *
+ * Parsed with a small hand reader rather than js-yaml so this suite keeps
+ * running on a checkout with no node_modules, which is how it is often reached.
+ *
+ * @returns {Map<string, string>} declared path → reason
+ */
+function declaredCommittedPaths() {
+  const out = new Map();
+  let text;
+  try {
+    text = readFileSync(join(ROOT, 'config', 'committed-user-layer.yml'), 'utf-8');
+  } catch {
+    return out; // absent = no exceptions, upstream behaviour
+  }
+  let current = null;
+  const reasonLines = [];
+  const flush = () => {
+    if (current) out.set(current, reasonLines.join(' ').replace(/\s+/g, ' ').trim());
+    current = null;
+    reasonLines.length = 0;
+  };
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.replace(/\s+$/, '');
+    if (/^\s*#/.test(line) || line.trim() === '') continue;
+    const pathMatch = line.match(/^\s*-\s*path:\s*(.+)$/);
+    if (pathMatch) {
+      flush();
+      current = pathMatch[1].trim().replace(/^["']|["']$/g, '');
+      continue;
+    }
+    if (/^\s*reason:\s*>-?\s*$/.test(line)) continue;
+    if (current && /^\s{4,}\S/.test(line)) reasonLines.push(line.trim());
+  }
+  flush();
+  return out;
+}
+
+const committed = declaredCommittedPaths();
+
 console.log('\n🔒 user-layer files are git-ignored');
+
+if (committed.size > 0) {
+  pass(`config/committed-user-layer.yml declares ${committed.size} deliberate exception(s)`);
+}
 
 // Pull the declared user-layer paths straight out of AGENTS.md so the test tracks
 // the document rather than a hand-copied duplicate of it.
@@ -81,11 +141,23 @@ if (!line) {
     const first = checkIgnore(probe);
 
     if (first.verdict === 'ignored') {
-      pass(`${p} is git-ignored`);
+      // A path declared committed but still ignored means the two files have
+      // drifted — the declaration is claiming a trade-off that is not actually
+      // being made. Say so rather than passing silently.
+      if (committed.has(p)) {
+        warn(`${p} is declared in config/committed-user-layer.yml but IS still git-ignored — `
+          + 'remove the declaration, or add the .gitignore negation it describes');
+      } else {
+        pass(`${p} is git-ignored`);
+      }
       continue;
     }
     if (first.verdict === 'not-ignored') {
-      fail(`${p} is declared user-layer in AGENTS.md but is NOT git-ignored — personal data could be committed`);
+      if (committed.has(p)) {
+        warn(`${p} is committed on purpose — ${committed.get(p)}`);
+      } else {
+        fail(`${p} is declared user-layer in AGENTS.md but is NOT git-ignored — personal data could be committed`);
+      }
       continue;
     }
 

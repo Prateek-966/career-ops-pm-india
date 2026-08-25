@@ -430,6 +430,7 @@ export const USER_PATHS = [
   'voice-dna.md',
   'portals.yml',
   'config/india-seed-companies.yml',
+  'config/committed-user-layer.yml',
   'data/outreach-log.tsv',
   'article-digest.md',
   'interview-prep/',

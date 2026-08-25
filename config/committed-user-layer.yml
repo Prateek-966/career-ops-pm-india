@@ -1,0 +1,46 @@
+# Deliberately committed user-layer files (Job-finder fork)
+#
+# AGENTS.md declares a User Layer — the files a candidate fills with their own
+# personal data — and `tests/user-layer-gitignored.test.mjs` asserts every one
+# of them is gitignored. That guard exists because upstream career-ops is a
+# PUBLIC template repo, where a reflexive `git add .` in someone's fork would
+# push their CV and comp expectations to the world.
+#
+# Prateek-966/Job-finder is a PRIVATE, single-person repo. Here the trade runs
+# the other way: a gitignored file does not survive a fresh clone or a new
+# container, so the setup has to be rebuilt from a PDF every time. Committing
+# it is what makes the tool usable.
+#
+# This file makes that a DECLARED decision rather than a silently weakened
+# test. Every path listed here is still reported by the guard on every run — as
+# a warning naming the reason, not a silent pass — so the trade-off stays
+# visible instead of being forgotten in .gitignore. Everything NOT listed here
+# is still hard-failed if it becomes committable.
+#
+# ── Before adding a path here, check all three ────────────────────────────
+#
+#   1. Is this repo still private? A private repo can be flipped public in two
+#      clicks, and a collaborator added later sees the whole history.
+#   2. Would you mind this content in git FOREVER? Deleting a file later does
+#      not remove it from history — it needs a history rewrite.
+#   3. Is it worth it? "It saves me re-uploading a PDF" is a real reason. Most
+#      user-layer files do not clear that bar.
+
+committed:
+  - path: cv.md
+    reason: >-
+      A CV is a document you send to strangers by design, so committing it to a
+      private repo adds essentially no exposure — and it is the single file
+      everything else depends on. Without it, doctor.mjs reports the install
+      incomplete and outreach-draft.mjs refuses to draft anything at all.
+
+  - path: config/profile.yml
+    reason: >-
+      Carries the archetype ladder, the markets block and the proof points —
+      the PRD v2 targeting work — alongside contact details. Committing it
+      means a fresh clone is immediately usable.
+      CAVEAT: it also holds `compensation.target_range` and
+      `compensation.minimum`. That is the one thing you would never show a
+      counterparty, and it is now in git history permanently. Blank those two
+      keys if that trade is not worth it to you; nothing else in the system
+      reads them except salary-gap.mjs and the negotiation modes.

@@ -160,3 +160,20 @@ documents/*
 # PII (e.g. cv/jane-doe-master-cv.pdf). #1723
 data/intake-state.json
 
+
+# ── Job-finder fork: two user-layer files committed on purpose ──────────────
+#
+# Upstream ignores these because career-ops is a PUBLIC template repo, where a
+# fork owner's `git add .` would publish their CV. This repo is PRIVATE and
+# single-person, and there the trade runs the other way: a gitignored file does
+# not survive a fresh clone, so the setup gets rebuilt from a PDF every time.
+#
+# The reasons — and the caveat about comp figures living in git history
+# permanently — are recorded in config/committed-user-layer.yml, which
+# tests/user-layer-gitignored.test.mjs reads and reports on every run.
+#
+# Scoped to these two paths ONLY. Every other user-layer file (the tracker,
+# reports, contacts, documents, interview prep, and every timestamped .bak)
+# stays ignored and is still hard-failed by that test if it becomes committable.
+!cv.md
+!config/profile.yml

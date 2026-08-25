@@ -1755,16 +1755,34 @@ for (const f of skillEntrypoints) {
   }
 }
 
-// Check user files are NOT tracked (gitignored)
+// Check user files are NOT tracked (gitignored).
+//
+// A path listed in config/committed-user-layer.yml is exempt: this fork is a
+// private single-person repo, where a gitignored file does not survive a fresh
+// clone, and cv.md / config/profile.yml are deliberately committed so the setup
+// is not rebuilt from a PDF every time. The reasons live in that file, and
+// tests/user-layer-gitignored.test.mjs prints them as warnings on every run.
+//
+// Read here rather than hard-coded, so the two guards cannot disagree about
+// which paths are exempt — that divergence is exactly how one of them ends up
+// silently unenforced.
+const committedUserLayer = new Set(
+  (readFile('config/committed-user-layer.yml') || '')
+    .split(/\r?\n/)
+    .map(l => l.match(/^\s*-\s*path:\s*(.+?)\s*$/))
+    .filter(Boolean)
+    .map(m => m[1].replace(/^["']|["']$/g, '')),
+);
+
 const userFiles = [
   'config/profile.yml', 'modes/_profile.md', 'portals.yml',
 ];
 for (const f of userFiles) {
   const tracked = run('git', ['ls-files', f]);
-  if (tracked === '') {
+  if (tracked === '' || tracked === null) {
     pass(`User file gitignored: ${f}`);
-  } else if (tracked === null) {
-    pass(`User file gitignored: ${f}`);
+  } else if (committedUserLayer.has(f)) {
+    warn(`User file ${f} is tracked on purpose — declared in config/committed-user-layer.yml`);
   } else {
     fail(`User file IS tracked (should be gitignored): ${f}`);
   }
