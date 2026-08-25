@@ -368,7 +368,25 @@ const scripts = [
   // default portals.yml because end-user workspaces often have a real user-layer
   // portals file that would trigger a live remote sweep during tests.
   { name: 'verify-portals.mjs --file .tmp-test-missing-portals.yml', expectExit: 0 },
-  { name: 'update-system.mjs check', expectExit: 0 },
+  // 180s, not the 30s default: `check` was never a 30-second script. It makes
+  // up to three curl calls (12s cap each, two in parallel then one sequential),
+  // and then — whenever the installed commit differs from upstream main — a
+  // `git fetch` of the whole upstream repo, whose own budget is
+  // DEFAULT_GIT_FETCH_TIMEOUT_MS (300s). The default budget SIGTERM'd it
+  // mid-fetch and the suite reported a crash.
+  //
+  // That fetch path is not occasional in a fork: every commit here sits on top
+  // of upstream, so HEAD can never equal upstream main again and the drift
+  // check runs on every single invocation. Only the runner's speed decided
+  // whether it landed under 30s — ubuntu did, macOS and windows did not, which
+  // is why this read as a platform bug rather than a budget that was too small
+  // for the work.
+  //
+  // Raising the budget rather than skipping the fetch: that fetch is how
+  // same-version system-file drift is detected (#2630), and a check that
+  // silently stops looking is worse than a slow one. A genuinely offline
+  // machine never reaches it — curl fails fast and check() returns `offline`.
+  { name: 'update-system.mjs check', expectExit: 0, timeoutMs: 180_000 },
   { name: 'seed-fixture.mjs --self-test', expectExit: 0 },
   { name: 'archive-posting.mjs --help', expectExit: 0 },
 ];
