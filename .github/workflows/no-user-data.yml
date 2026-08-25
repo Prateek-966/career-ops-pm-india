@@ -80,25 +80,62 @@ jobs:
             // checkout step above), so a PR cannot grant itself an exemption by
             // adding a path to the file in the same diff. An exemption counts
             // only once it is merged, which is to say once a human approved it.
+            // The single exception is the bootstrap case below, which is
+            // labelled as such in the log and still requires that merge.
             // Every exemption in force is echoed into the CI log below so the
             // set can never be quiet.
             //
             // The file list itself still comes from the PR (listFiles API), so
             // fork PRs are covered exactly as before.
+            const parseDecl = (text) => new Set(
+              text.split(/\r?\n/)
+                .map((l) => l.match(/^\s*-\s*path:\s*(.+?)\s*$/))
+                .filter(Boolean)
+                .map((m) => m[1].replace(/^["']|["']$/g, '')),
+            );
+
             let exempt = new Set();
+            let bootstrap = false;
             try {
-              const decl = fs.readFileSync('config/committed-user-layer.yml', 'utf8');
-              exempt = new Set(
-                decl.split(/\r?\n/)
-                  .map((l) => l.match(/^\s*-\s*path:\s*(.+?)\s*$/))
-                  .filter(Boolean)
-                  .map((m) => m[1].replace(/^["']|["']$/g, '')),
-              );
+              exempt = parseDecl(fs.readFileSync('config/committed-user-layer.yml', 'utf8'));
             } catch {
-              // Absent = no exceptions, i.e. upstream behaviour.
+              // Not on the base ref. Two very different situations look identical
+              // here, so ask which one this is rather than guessing:
+              //
+              //   (a) There is no declaration anywhere — upstream behaviour, no
+              //       exemptions, every user-layer file blocked. Correct.
+              //   (b) This PR is the one INTRODUCING the declaration. Reading the
+              //       base then yields nothing and the guard blocks the very
+              //       commit that establishes the policy — which is what happened
+              //       on the first attempt, because this repo's `main` is an empty
+              //       initial commit.
+              //
+              // (b) is a genuine bootstrap, and it is not a hole: the grant still
+              // cannot take effect without a human merging THIS PR, which is the
+              // same approval the base-ref read was protecting. It is labelled
+              // loudly so it can never pass as a routine run.
+              try {
+                const res = await github.rest.repos.getContent({
+                  owner, repo,
+                  path: 'config/committed-user-layer.yml',
+                  ref: context.payload.pull_request.head.sha,
+                });
+                exempt = parseDecl(Buffer.from(res.data.content, 'base64').toString('utf8'));
+                bootstrap = exempt.size > 0;
+              } catch {
+                // Genuinely absent on both sides — case (a).
+              }
+            }
+            if (bootstrap) {
+              core.warning(
+                'BOOTSTRAP: config/committed-user-layer.yml does not exist on the base ref, so the '
+                + 'exemption list was read from this PR\'s head. This PR is introducing the policy. '
+                + 'Review the exemptions below as part of reviewing this PR — once merged, later PRs '
+                + 'read the list from the base and cannot grant themselves anything.'
+              );
             }
             if (exempt.size) {
-              core.info('Declared user-layer exceptions (config/committed-user-layer.yml):');
+              core.info(`Declared user-layer exceptions (read from ${bootstrap ? 'PR HEAD — bootstrap' : 'base ref'}):`);
               for (const p of exempt) core.info(`  - ${p}`);
             }
 
