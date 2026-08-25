@@ -175,5 +175,8 @@ data/intake-state.json
 # Scoped to these two paths ONLY. Every other user-layer file (the tracker,
 # reports, contacts, documents, interview prep, and every timestamped .bak)
 # stays ignored and is still hard-failed by that test if it becomes committable.
-!cv.md
-!config/profile.yml
+# Anchored to the repo root. An unanchored `!cv.md` also un-ignores
+# examples/*/cv.md — upstream's sample CVs, which are not this fork's to
+# commit and were never the point of the exception.
+!/cv.md
+!/config/profile.yml
