@@ -39,6 +39,7 @@
     "scan:seeds": "node scan-ats-full.mjs --seeds yc,a16z",
     "scan:yc": "node scan-ats-full.mjs --seeds yc",
     "scan:interamt": "node scan-interamt.mjs",
+    "setup:pm-india": "node scripts/setup-pm-india.mjs",
     "scan:india": "node india-scan.mjs",
     "seed:india": "node discover-ats.mjs --in config/india-seed-companies.yml --summary",
     "seed:india:write": "node discover-ats.mjs --in config/india-seed-companies.yml --write",

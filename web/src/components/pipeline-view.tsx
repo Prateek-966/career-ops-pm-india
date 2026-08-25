@@ -9,6 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { CompanyLogo } from "@/components/company-logo";
 import { canonStatus, scoreNum, scoreTone, statusDot } from "@/lib/format";
 import { InboxTriage } from "@/components/inbox/inbox-triage";
+import { MarketFilter } from "@/components/market-filter";
+import { SourceBadge, CompanyTypeBadge, UnknownMarketBadge } from "@/components/signal-badges";
+import { jobSignals, countByMarket, marketLabel } from "@/lib/job-signals.mjs";
 import { cn } from "@/lib/cn";
 
 // INBOX (the triage queue) is the default tab; the rest filter the tracker.
@@ -48,6 +51,10 @@ export function PipelineView({
   const tab: Tab = (TABS as readonly string[]).includes(pTab) ? (pTab as Tab) : "INBOX";
   const pMin = parseFloat(params.get("min") ?? "");
   const minFilter: number | null = Number.isFinite(pMin) ? pMin : null;
+  // Market rides in the URL like every other filter, so a deep link carries it
+  // and the assistant can set it the same way it sets tab/min/q.
+  const pMarket = (params.get("market") ?? "").toLowerCase();
+  const marketFilter: string | null = pMarket || null;
   const pSort = params.get("sort") ?? "";
   const sortKey: SortKey = (SORT_KEYS as readonly string[]).includes(pSort) ? (pSort as SortKey) : "score";
   const sort = { key: sortKey, dir: (params.get("dir") === "1" ? 1 : -1) as 1 | -1 };
@@ -104,6 +111,7 @@ export function PipelineView({
       const needle = q.toLowerCase();
       rows = rows.filter((r) => `${r.company} ${r.role}`.toLowerCase().includes(needle));
     }
+    if (marketFilter) rows = rows.filter((r) => jobSignals(r).market === marketFilter);
     return [...rows].sort((a, b) => {
       if (sort.key === "score") {
         const an = scoreNum(a.score);
@@ -114,7 +122,27 @@ export function PipelineView({
       }
       return (a[sort.key] || "").localeCompare(b[sort.key] || "") * sort.dir;
     });
-  }, [applications, tab, q, sort, minFilter]);
+  }, [applications, tab, q, sort, minFilter, marketFilter]);
+
+  // Counts come from the tab/score/search-filtered set but BEFORE the market
+  // filter itself, so the numbers on the other market chips stay meaningful
+  // while one is selected — a count that collapses to 0 the moment you filter
+  // gives you nothing to switch to.
+  const marketCounts = useMemo(() => {
+    let rows = applications;
+    if (tab !== "ALL" && tab !== "INBOX") rows = rows.filter((r) => canonStatus(r.status).includes(tab));
+    if (minFilter != null) {
+      rows = rows.filter((r) => {
+        const n = scoreNum(r.score);
+        return !Number.isNaN(n) && n >= minFilter;
+      });
+    }
+    if (q.trim()) {
+      const needle = q.toLowerCase();
+      rows = rows.filter((r) => `${r.company} ${r.role}`.toLowerCase().includes(needle));
+    }
+    return countByMarket(rows);
+  }, [applications, tab, q, minFilter]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 max-sm:pb-24">
@@ -165,6 +193,15 @@ export function PipelineView({
           );
         })}
       </div>
+
+      {tab !== "INBOX" && (
+        <MarketFilter
+          className="mt-3"
+          value={marketFilter}
+          counts={marketCounts}
+          onChange={(m) => setParams({ market: m })}
+        />
+      )}
 
       {tab !== "INBOX" && minFilter != null && (
         <div className="mt-3 flex items-center gap-2">
@@ -223,6 +260,11 @@ export function PipelineView({
                   </td>
                   <td className="px-4 py-3 text-muted">
                     <Link href={`/pipeline/${r.n}`}>{r.role}</Link>
+                    {/* Signals ride under the role rather than in new columns:
+                        the tracker table is already at min-w-[44rem] and three
+                        more columns would push it past a phone's scroll on
+                        every row, not just the tagged ones. */}
+                    <SignalRow row={r} />
                   </td>
                   <td className="px-4 py-3">
                     <Badge tone={scoreTone(r.score)}>{r.score || "—"}</Badge>
@@ -240,12 +282,71 @@ export function PipelineView({
           </table>
         </div>
       ) : (
-        <div className="mt-4 rounded-2xl border border-dashed border-border bg-surface/30 px-6 py-12 text-center">
-          <p className="font-display text-lg">No matches</p>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-muted">Try a different tab or clear the search.</p>
-        </div>
+        <TrackerEmpty market={marketFilter} onClearMarket={() => setParams({ market: null })} />
       )}
     </div>
+  );
+}
+
+/**
+ * Empty tracker view. Names the thing the user controls and the exact next
+ * action, rather than the generic "no matches" it replaced — Part C: "Empty
+ * states direct action."
+ *
+ * The market-filtered case is separated because the fix is different in kind:
+ * an empty India bucket is not a search problem, it is a coverage problem, and
+ * the action is to seed company tenants rather than to reword a query.
+ */
+function TrackerEmpty({ market, onClearMarket }: { market: string | null; onClearMarket: () => void }) {
+  if (market) {
+    const label = marketLabel(market);
+    return (
+      <div className="mt-4 rounded-2xl border border-dashed border-border bg-surface/30 px-6 py-12 text-center">
+        <p className="font-display text-lg">No {label} roles yet.</p>
+        {market === "unknown" ? (
+          <p className="mx-auto mt-1 max-w-md text-sm text-muted">
+            Nothing is sitting in the unknown bucket — every tracked role normalized to a market.
+          </p>
+        ) : (
+          <p className="mx-auto mt-1 max-w-md text-sm text-muted">
+            Add company tenants in Config → Portals, then run a scan. In the terminal:{" "}
+            <code className="rounded bg-surface-hover px-1 py-0.5 font-mono">npm run seed:india</code>.
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={onClearMarket}
+          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:text-foreground"
+        >
+          Show all markets <X className="size-3" />
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-4 rounded-2xl border border-dashed border-border bg-surface/30 px-6 py-12 text-center">
+      <p className="font-display text-lg">No matches</p>
+      <p className="mx-auto mt-1 max-w-sm text-sm text-muted">Try a different tab or clear the search.</p>
+    </div>
+  );
+}
+
+/**
+ * The three Part C labels for one tracker row. Renders nothing at all when the
+ * row carries no tags — an untagged row is the normal case for anything added
+ * before the India work, and a row of empty placeholders would be noise on
+ * every line of an existing tracker.
+ */
+function SignalRow({ row }: { row: Application }) {
+  const { market, source, companyType } = jobSignals(row);
+  const hasUnknown = market === "unknown" && (source != null || companyType != null);
+  if (!source && !companyType && !hasUnknown) return null;
+  return (
+    <span className="mt-1 flex flex-wrap items-center gap-1.5">
+      <CompanyTypeBadge companyType={companyType} />
+      <SourceBadge source={source} />
+      <UnknownMarketBadge market={hasUnknown ? market : ""} />
+    </span>
   );
 }
 

@@ -15,31 +15,47 @@
 //       should-PASS list below is the more important half of this file: it is
 //       the only place a narrowing of the filter becomes visible.
 //
-// The filter is compiled through the REAL title-keywords.mjs, from the REAL
-// portals.yml, so a change to either is caught here rather than at scan time.
+// The filter is compiled through the REAL title-keywords.mjs, so a change to
+// either the keyword semantics or the config is caught here, not at scan time.
 
-import { pass, fail, warn, ROOT } from './helpers.mjs';
+import { pass, fail, ROOT } from './helpers.mjs';
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import * as yaml from 'js-yaml';
 import { buildTitleFilter } from '../title-keywords.mjs';
 
-console.log('\nPM title filter — portals.yml admits the PM surface, rejects non-PM');
+console.log('\nPM title filter — admits the PM surface, rejects non-PM');
 
-// portals.yml is a user-layer file (gitignored upstream; committed in this
-// fork). A checkout without one is a valid state — doctor.mjs reports it as
-// onboarding — so this is a skip, not a failure.
-const PORTALS = join(ROOT, 'portals.yml');
-if (!existsSync(PORTALS)) {
-  warn('portals.yml not present in this checkout — skipping the PM title-filter check');
-} else {
-  const cfg = yaml.load(readFileSync(PORTALS, 'utf8'));
+// The COMMITTED template is the thing under test, not the live portals.yml.
+//
+// portals.yml is user-layer and gitignored (tests/user-layer-gitignored
+// enforces that), so on a fresh clone it does not exist and a test pointed at
+// it would silently skip — which is how a filter regression ships. The
+// template always exists, so this guard always runs.
+//
+// When a live portals.yml IS present, it is checked too: that is the file the
+// scanner actually reads, and a user who edited it into a narrow filter should
+// hear about it.
+const TEMPLATE = join(ROOT, 'templates', 'portals.pm-india.yml');
+const LIVE = join(ROOT, 'portals.yml');
+
+const targets = [];
+if (existsSync(TEMPLATE)) targets.push(['templates/portals.pm-india.yml', TEMPLATE]);
+else fail('templates/portals.pm-india.yml is missing — the PM title filter has no committed source');
+if (existsSync(LIVE)) targets.push(['portals.yml (live)', LIVE]);
+
+for (const [label, path] of targets) {
+  checkPortals(label, path);
+}
+
+function checkPortals(label, path) {
+  const cfg = yaml.load(readFileSync(path, 'utf8'));
   const tf = cfg?.title_filter;
 
   if (!tf || !Array.isArray(tf.positive) || tf.positive.length === 0) {
-    fail('portals.yml has no title_filter.positive — an empty positive list matches EVERY title');
+    fail(`${label} has no title_filter.positive — an empty positive list matches EVERY title`);
   } else {
-    pass(`title_filter compiled (${tf.positive.length} positive, ${(tf.negative || []).length} negative)`);
+    pass(`${label}: title_filter compiled (${tf.positive.length} positive, ${(tf.negative || []).length} negative)`);
 
     const matches = buildTitleFilter(tf);
 
@@ -113,25 +129,25 @@ if (!existsSync(PORTALS)) {
 
     const missed = mustPass.filter(t => !matches(t));
     if (missed.length === 0) {
-      pass(`all ${mustPass.length} PM titles reach the rubric`);
+      pass(`${label}: all ${mustPass.length} PM titles reach the rubric`);
     } else {
-      fail(`title filter is too narrow — ${missed.length} PM title(s) silently dropped: ${missed.join(' | ')}`);
+      fail(`${label}: title filter is too narrow — ${missed.length} PM title(s) silently dropped: ${missed.join(' | ')}`);
     }
 
     const leaked = mustReject.filter(t => matches(t));
     if (leaked.length === 0) {
-      pass(`all ${mustReject.length} non-PM titles rejected before evaluation`);
+      pass(`${label}: all ${mustReject.length} non-PM titles rejected before evaluation`);
     } else {
-      fail(`title filter leaks — ${leaked.length} non-PM title(s) would be evaluated: ${leaked.join(' | ')}`);
+      fail(`${label}: title filter leaks — ${leaked.length} non-PM title(s) would be evaluated: ${leaked.join(' | ')}`);
     }
 
     // Product marketing gets its own assertion so the failure names the
     // criterion rather than hiding inside the bulk list above.
     const marketing = ['Product Marketing Manager', 'Senior Product Marketing Manager', 'Product Marketing Lead'];
     if (marketing.every(t => !matches(t))) {
-      pass('zero product-marketing roles reach evaluation');
+      pass(`${label}: zero product-marketing roles reach evaluation`);
     } else {
-      fail('product-marketing roles reach evaluation — PRD acceptance criterion violated');
+      fail(`${label}: product-marketing roles reach evaluation — PRD acceptance criterion violated`);
     }
 
     // The positive list must stay domain-free. A domain word here re-creates
@@ -141,9 +157,9 @@ if (!existsSync(PORTALS)) {
     const positives = tf.positive.filter(k => typeof k === 'string').map(k => k.toLowerCase());
     const domainy = positives.filter(k => DOMAIN_WORDS.includes(k.replace(/^word:/, '').trim()));
     if (domainy.length === 0) {
-      pass('positive list is domain-free — domain fit stays a rubric dimension');
+      pass(`${label}: positive list is domain-free — domain fit stays a rubric dimension`);
     } else {
-      fail(`domain keyword(s) in title_filter.positive: ${domainy.join(', ')} — this narrows the scan invisibly (PRD §A1.1)`);
+      fail(`${label}: domain keyword(s) in title_filter.positive: ${domainy.join(', ')} — this narrows the scan invisibly (PRD §A1.1)`);
     }
   }
 }

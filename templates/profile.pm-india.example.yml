@@ -9,7 +9,7 @@
 
 candidate:
   full_name: "TODO — your full name"
-  email: "nonuprateek1996@gmail.com"
+  email: "TODO — your email"
   phone: "TODO — +91-..."
   wechat: ""
   location: "Pune, Maharashtra, India"
@@ -101,9 +101,9 @@ narrative:
       hero_metric: "TODO — e.g. 'Forecast accuracy +11pp across 4 markets'"
 
 compensation:
-  target_range: ""
+  target_range: "TODO — your target range"
   currency: "INR"
-  minimum: ""
+  minimum: "TODO — your walk-away minimum"
   location_flexibility: "Pune/Bengaluru hybrid, or remote-India; open to UK/EU and Gulf relocation"
 
 location:

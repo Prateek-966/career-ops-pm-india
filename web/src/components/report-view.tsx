@@ -9,6 +9,7 @@ import { cleanHeading, splitSections } from "@/lib/report-sections.mjs";
 import { StatusSelect } from "@/components/status-select";
 import { CompanyLogo } from "@/components/company-logo";
 import { ScoreMethodology } from "@/components/score-methodology";
+import { ScoreBreakdown } from "@/components/score-breakdown";
 import { GeneratePdfButton } from "@/components/generate-pdf-button";
 import { ApplyButton } from "@/components/apply-button";
 import { DeleteFromTracker } from "@/components/delete-from-tracker";
@@ -163,6 +164,12 @@ export function ReportView({
                     </article>
                   </div>
                 )}
+
+                {/* Directly under the verdict, above the prose blocks: this is
+                    the decision moment, and the breakdown is what makes the
+                    number inspectable rather than something to take on faith.
+                    Renders nothing for a report with no pm_dimensions fence. */}
+                <ScoreBreakdown report={report} className="mt-6" />
 
                 {mainSections.map((s, i) => {
                   const expanded = s.letter === "A" || s.letter === "B" || (!anyAB && i === 0);

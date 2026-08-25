@@ -8,6 +8,7 @@ import { ArrowLeft, Loader2, Wrench, CircleDot, Check, X } from "lucide-react";
 import { useJobs } from "@/components/jobs/job-store";
 import { HeroGlow } from "@/components/hero-glow";
 import { Badge } from "@/components/ui/badge";
+import { ScoreBreakdown } from "@/components/score-breakdown";
 
 export default function JobPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -55,6 +56,14 @@ export default function JobPage({ params }: { params: Promise<{ id: string }> })
           )}
         </div>
       </section>
+
+      {/* The score surface. A bare 1-5 under-serves the decision this whole
+          pipeline exists to produce, so the dimensional breakdown sits directly
+          under the headline number — inspectable, and therefore arguable.
+          Driven by the worker's own output, so it appears as soon as the
+          evaluation has written its Machine Summary; renders nothing before
+          then, and nothing for a run that produced no rubric fence. */}
+      <ScoreBreakdown report={job.text ?? null} className="mt-6" />
 
       <ol className="mt-6 space-y-2">
         {job.steps.map((s, i) => (

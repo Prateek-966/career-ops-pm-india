@@ -7,6 +7,8 @@ import { instrumentSerif } from "@/lib/fonts";
 import { ATS_LABEL, type AtsSource, type DiscoveredOffer } from "@/lib/explore";
 import { useJobs } from "@/components/jobs/job-store";
 import { useExplore } from "./explore-provider";
+import { SourceBadge, UnknownMarketBadge } from "@/components/signal-badges";
+import { jobSignals } from "@/lib/job-signals.mjs";
 
 function freshness(postedAt: string): string {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(postedAt)) return "";
@@ -87,6 +89,20 @@ export function DiscoveryCard({ offer, inPipeline, evaluatedN }: { offer: Discov
 
       <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
         <span className="rounded border border-border px-1.5 py-0.5 font-medium text-muted">{ATS_LABEL[offer.ats as AtsSource] ?? offer.ats}</span>
+        {/* Coverage differs by tier, so provenance is stated rather than
+            inferred — and stated neutrally, because it is a fact about how the
+            role was found, not a grade. Only appears on offers the scanner
+            actually tagged (see modes/_custom.md → Pipeline Rules). */}
+        {(() => {
+          const { source, market } = jobSignals(offer);
+          if (!source && market !== "unknown") return null;
+          return (
+            <>
+              <SourceBadge source={source} />
+              <UnknownMarketBadge market={market} />
+            </>
+          );
+        })()}
         {fresh && <span className="text-faint">{fresh}</span>}
         {unverified && (
           <span

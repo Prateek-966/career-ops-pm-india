@@ -71,6 +71,14 @@ Seed list: `config/india-seed-companies.yml` — 149 companies across the four
 buckets the PRD names (Indian product companies, AI-native startups, global
 product companies hiring PMs in India, and GCCs with genuine product charters).
 
+That path is user-layer and gitignored, because `npm run add-company` appends to
+it as you browse and it therefore records which companies *you* are watching.
+The curated starting list is committed at `templates/india-seed-companies.yml`
+and installed by `npm run setup:pm-india` — the same template/live split the
+repo already uses for `config/profile.example.yml` and
+`templates/portals.example.yml`, and the reason the PM/India configuration
+survives a fresh clone without any personal data entering git.
+
 ```bash
 npm run seed:india          # preview what resolves
 npm run seed:india:write    # append resolved tenants to portals.yml

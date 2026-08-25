@@ -225,7 +225,14 @@ function main(argv) {
   }
 
   if (!existsSync(SEED_PATH)) {
-    console.error(`add-company: ${SEED_PATH} not found — run from the repo root.`);
+    // The seed list is user-layer (gitignored — it records which companies you
+    // are watching) and is installed from templates/ on setup. A missing file
+    // means setup has not run, not that the list is empty.
+    console.error(
+      `add-company: ${SEED_PATH} not found.\n`
+      + '  Run `npm run setup:pm-india` to install it from templates/, then try again.\n'
+      + '  (If you are not in the repo root, cd there first.)',
+    );
     return 2;
   }
 
