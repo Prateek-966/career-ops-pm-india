@@ -1,0 +1,21 @@
+{
+  "id": "nike-product-supply-chain-manager-bengaluru",
+  "synthetic": false,
+  "company": "NIKE",
+  "title": "Lead Product Supply Chain Manager, India",
+  "location": "Bengaluru Urban District, Karnataka",
+  "url": "https://to.indeed.com/aayv4txwk94t",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "reject",
+  "label": {
+    "company_type": "gcc",
+    "company_type_evidence": "Not applicable in practice — this is not a product-management role at all. Career area is \"Manufacturing & Engineering\"; the work is factory-partner program management for footwear manufacturing.",
+    "domain": "footwear manufacturing operations",
+    "domain_tier": "weak",
+    "is_ai_role": false,
+    "seniority": "10+ years",
+    "roadmap_authority": "not_applicable",
+    "why_it_matters": "The false-positive control. The title contains both \"Product\" and \"Manager\" but never the phrase \"Product Manager\", so the title filter must NOT admit it — and this is a real posting, returned by a real supply-chain PM search, not a constructed example."
+  }
+}

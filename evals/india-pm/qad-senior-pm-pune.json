@@ -1,0 +1,21 @@
+{
+  "id": "qad-senior-pm-pune",
+  "synthetic": false,
+  "company": "QAD, Inc.",
+  "title": "Senior Product Manager",
+  "location": "Pune, Maharashtra",
+  "url": "https://to.indeed.com/aalbnm47mtyf",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "\"QAD is a leading provider of ERP solutions\" — the product is the business. \"Strategically own and maintain the product roadmap\" and \"Drive full accountability for product performance\" state roadmap ownership outright.",
+    "domain": "ERP / supply chain",
+    "domain_tier": "secondary",
+    "is_ai_role": false,
+    "seniority": "8-12 years",
+    "roadmap_authority": "high",
+    "why_it_matters": "The strongest non-AI case in the set: ERP + Global Trade Management at a manufacturing-software company, asking for exactly the 8-12 year enterprise B2B profile. If the rubric cannot score this >= 4 it is covertly AI-only."
+  }
+}

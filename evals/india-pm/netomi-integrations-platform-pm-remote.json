@@ -1,0 +1,22 @@
+{
+  "id": "netomi-integrations-platform-pm-remote",
+  "synthetic": false,
+  "company": "Netomi",
+  "title": "Senior Product Manager – Integrations Platform",
+  "location": "Remote",
+  "url": "https://to.indeed.com/aanbp7t2qh9d",
+  "source_tier": "indeed",
+  "market": "unknown",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "Venture-backed product company (Y Combinator, Index Ventures); the seat owns a platform surface: \"Own roadmap and delivery for: CCaaS/agent desk integrations, Integration Builder + Actions runtime productization, SDKs/embedded experiences\".",
+    "domain": "integration / iPaaS, with real AI-platform depth",
+    "domain_tier": "secondary",
+    "is_ai_role": true,
+    "ai_builder_or_steward": "builder",
+    "seniority": "5-8+ years",
+    "roadmap_authority": "high",
+    "why_it_matters": "The international-remote case, and the clearest AI-BUILDER signal in the set: evaluation/quality gating, guardrails, tool-call reliability, latency and load behaviour. Contrast with PwC (keyword_only) and Google (steward) — three AI roles, three different readings. Its location is literally \"Remote\" with no country, so it is also the market=unknown case."
+  }
+}

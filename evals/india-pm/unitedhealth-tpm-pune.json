@@ -1,0 +1,21 @@
+{
+  "id": "unitedhealth-tpm-pune",
+  "synthetic": false,
+  "company": "UnitedHealth Group (Optum)",
+  "title": "Technical Product Manager",
+  "location": "Pune, Maharashtra",
+  "url": "https://to.indeed.com/aash97hnbhzj",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "gcc",
+    "company_type_evidence": "\"Optum is a global organization\" with the seat in Pune; \"Experience navigating global, cross-functional environments and driving initiatives across multiple business units\". The role is a bridge between business and engineering, not a product owner: \"acts as a bridge between business and engineering teams, ensuring the successful technical implementation of product requirements\".",
+    "domain": "healthcare",
+    "domain_tier": "transferable",
+    "is_ai_role": false,
+    "seniority": "3+ years",
+    "roadmap_authority": "low",
+    "why_it_matters": "Textbook GCC delivery seat wearing a product title. Also a seniority mismatch (3+ years against an 8+ year profile). The GCC label must be recorded WITHOUT subtracting points for it — the low score should come from roadmap authority and level, not from the label."
+  }
+}

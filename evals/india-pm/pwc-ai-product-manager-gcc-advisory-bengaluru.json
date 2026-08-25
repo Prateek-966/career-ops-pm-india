@@ -1,0 +1,22 @@
+{
+  "id": "pwc-ai-product-manager-gcc-advisory-bengaluru",
+  "synthetic": false,
+  "company": "PwC",
+  "title": "IN_Senior Associate_Product Manager - AI Products__GCC_Advisory_Bangalore",
+  "location": "Bengaluru, Karnataka",
+  "url": "https://to.indeed.com/aa66tlhl28xl",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "gcc",
+    "company_type_evidence": "The requisition says GCC_Advisory in its own title. Line of Service is Advisory: \"provide consulting services for a wide range of business applications\". The product belongs to the client, not to PwC — there is no roadmap of one's own.",
+    "domain": "consulting / AI products",
+    "domain_tier": "transferable",
+    "is_ai_role": true,
+    "ai_builder_or_steward": "keyword_only",
+    "seniority": "7-15 years, Senior Associate",
+    "roadmap_authority": "low",
+    "why_it_matters": "A consultancy seat, which is a third shape the binary does not cover: neither a capability centre of a product company nor a product company. It has \"AI Product Manager\" in the title with no eval, model-selection or latency/cost language anywhere — the builder-vs-steward dimension should read keyword_only."
+  }
+}

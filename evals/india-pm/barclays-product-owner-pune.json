@@ -1,0 +1,21 @@
+{
+  "id": "barclays-product-owner-pune",
+  "synthetic": false,
+  "company": "Barclays",
+  "title": "Product Owner",
+  "location": "Pune, Maharashtra",
+  "url": "https://to.indeed.com/aanm9f2bz77h",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "gcc",
+    "company_type_evidence": "Cards Platform seat \"based out of Pune\" inside a global bank; accountabilities are backlog, sprint ceremonies and \"primary liaison between stakeholders and delivery teams\". The JD even hedges its own vision ownership: \"defining a clear product vision (are they setting the vision or would this align to )\".",
+    "domain": "fintech / cards platform, APIs and integrations",
+    "domain_tier": "secondary",
+    "is_ai_role": false,
+    "seniority": "AVP",
+    "roadmap_authority": "medium",
+    "why_it_matters": "A strong GCC platform role — APIs, integrations, event-driven architecture, enterprise scale. It should be able to outrank a weak startup role, which is only possible if company_type is a label and not a penalty."
+  }
+}

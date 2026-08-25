@@ -1,0 +1,21 @@
+{
+  "id": "nielsen-gracenote-data-platform-lead-pm-bengaluru",
+  "synthetic": false,
+  "company": "The Nielsen Company (Gracenote)",
+  "title": "Lead Product Manager",
+  "location": "Bengaluru, Karnataka",
+  "url": "https://to.indeed.com/aa2sglfwqqt8",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "Every surface signal says capability centre — \"from our Bengaluru engineering center\", \"partnering across time zones with ... stakeholders based in the US and Europe\" — and the JD rebuts it explicitly: \"This is not a satellite role. It is that the product anchor for our engineering center.\" Ownership is stated outright: \"Own the product vision, roadmap, and delivery for Gracenote's Data Platform\".",
+    "domain": "data platform",
+    "domain_tier": "primary",
+    "is_ai_role": false,
+    "seniority": "8+ years",
+    "roadmap_authority": "high",
+    "why_it_matters": "The hardest classification in the set, and the reason the GCC dimension needs evidence rather than pattern-matching on \"engineering center in India\". A classifier keying on surface phrases labels this gcc and is wrong."
+  }
+}

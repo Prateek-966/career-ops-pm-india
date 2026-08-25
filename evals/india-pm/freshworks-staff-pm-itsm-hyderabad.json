@@ -1,0 +1,21 @@
+{
+  "id": "freshworks-staff-pm-itsm-hyderabad",
+  "synthetic": false,
+  "company": "Freshworks",
+  "title": "Staff Product Manager",
+  "location": "Hyderabad, Telangana",
+  "url": "https://to.indeed.com/aacmtpf2kwdw",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "Indian-founded product company; the seat is \"a principal individual contributor and domain expert\" who will \"Own the long-term product vision and multi-year strategy for our ITSM capabilities\".",
+    "domain": "enterprise B2B SaaS / ITSM",
+    "domain_tier": "primary",
+    "is_ai_role": false,
+    "seniority": "9+ years, IC4",
+    "roadmap_authority": "high",
+    "why_it_matters": "Enterprise B2B SaaS at the right level, in India, at an Indian product company. Another of the non-AI roles the >= 4 criterion should be able to reach."
+  }
+}

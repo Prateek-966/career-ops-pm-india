@@ -1,0 +1,21 @@
+{
+  "id": "jfrog-platform-access-pm-bengaluru",
+  "synthetic": false,
+  "company": "JFrog",
+  "title": "Senior Product Manager (Platform Access)",
+  "location": "Bengaluru, Karnataka",
+  "url": "https://to.indeed.com/aaqrn9hlpwp7",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "\"Product decisions here are driven by customer problems, not just roadmaps. We have the autonomy to shape the future of the platform.\" Explicit strategy ownership: \"Drive Product Strategy: Identify market opportunities, define product vision\".",
+    "domain": "platform / IAM / developer platform",
+    "domain_tier": "primary",
+    "is_ai_role": false,
+    "seniority": "12+ years total, 6+ in PM",
+    "roadmap_authority": "high",
+    "why_it_matters": "The clearest primary-domain non-AI match in the set: API-first platform, enterprise IAM, 7,500 customers, senior level. Alongside QAD this is what the \">= 1 strong non-AI role scores >= 4\" criterion is measured on."
+  }
+}

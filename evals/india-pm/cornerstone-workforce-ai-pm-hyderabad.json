@@ -1,0 +1,22 @@
+{
+  "id": "cornerstone-workforce-ai-pm-hyderabad",
+  "synthetic": false,
+  "company": "Cornerstone OnDemand",
+  "title": "Product Manager - HR Technology",
+  "location": "Hyderabad, Telangana",
+  "url": "https://to.indeed.com/aazwbzrfdc6t",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "unclear",
+    "company_type_evidence": "A product company, but the India seat is described in capability-centre terms: \"serve as the connective tissue between global product strategy and day-to-day engineering execution\", \"Reports to: Senior Director, Strategic Programs\", \"Comfort operating across time zones with globally distributed product and engineering leadership\". Strategy is set elsewhere; this seat owns delivery. Product-company-with-GCC-shaped-scope is genuinely ambiguous.",
+    "domain": "HR tech / workforce data, plus API and headless platform",
+    "domain_tier": "secondary",
+    "is_ai_role": true,
+    "ai_builder_or_steward": "steward",
+    "seniority": "5+ years",
+    "roadmap_authority": "low",
+    "why_it_matters": "The second unclear case, and a different flavour from TE Connectivity: not a thin JD but a detailed one whose evidence genuinely points both ways. Guards against the classifier resolving ambiguity by defaulting to the company's type."
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "google-feedback-platform-pm-hyderabad",
+  "synthetic": false,
+  "company": "Google",
+  "title": "Product Manager, User Voice AI and Agentic Experiences",
+  "location": "Hyderabad, Telangana",
+  "url": "https://to.indeed.com/aa9nrhpq4scp",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "Product company with the seat owning a platform: \"Define and execute the product goal and roadmap for the User Feedback ingestion platform\". Engineering partners are in Hyderabad, so the seat is co-located with its build team rather than remote from it.",
+    "domain": "platform / API / developer platform",
+    "domain_tier": "primary",
+    "is_ai_role": true,
+    "ai_builder_or_steward": "steward",
+    "seniority": "5+ years",
+    "roadmap_authority": "high",
+    "why_it_matters": "The title says \"AI and Agentic Experiences\" but the JD is an ingestion-platform and developer-experience role: APIs, pipelines, self-service migration, adoption metrics. Tests that the AI dimension reads the body rather than the title, and that a mislabelled AI role is still scored on its real (strong, platform) shape."
+  }
+}

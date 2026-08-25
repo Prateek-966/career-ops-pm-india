@@ -1,0 +1,21 @@
+{
+  "id": "lenskart-supply-chain-pm-bengaluru",
+  "synthetic": false,
+  "company": "Lenskart.com",
+  "title": "Product Manager - Supply Chain",
+  "location": "Bengaluru, Karnataka",
+  "url": "https://to.indeed.com/aawzrh6726qk",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "Indian consumer-retail product company; the PM owns supply chain product surface end-to-end: \"Own features and modules across supply chain products end-to-end\".",
+    "domain": "supply chain",
+    "domain_tier": "primary",
+    "is_ai_role": false,
+    "seniority": "3-5 years",
+    "roadmap_authority": "medium",
+    "why_it_matters": "Primary domain (supply chain), real outcome metrics named (OTIF, inventory turns, fill rate, cost-to-serve), but sub-level at 3-5 years. Tests that domain fit and level are scored separately rather than collapsing into one number."
+  }
+}

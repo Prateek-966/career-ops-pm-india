@@ -1,0 +1,21 @@
+{
+  "id": "te-connectivity-pm3-pune",
+  "synthetic": false,
+  "company": "TE Connectivity",
+  "title": "PRODUCT MANAGER III",
+  "location": "Baner, Pune, Maharashtra",
+  "url": "https://to.indeed.com/aaxbqx8872zl",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "unclear",
+    "company_type_evidence": "The JD is ~80 words of boilerplate. No roadmap language, no reporting line, no team, no stakeholders named. There is genuinely not enough here to classify, and \"External Careers Page: Sales & Marketing\" plus \"from driving new product development to manufacturing to marketing\" hints the role may be closer to product marketing than product management.",
+    "domain": "industrial connectivity hardware",
+    "domain_tier": "weak",
+    "is_ai_role": false,
+    "seniority": "III (unclear)",
+    "roadmap_authority": "not_stated",
+    "why_it_matters": "The unclear case. A JD this thin must be labelled unclear and flagged, never guessed into gcc or product. It also tests that \"not stated\" is reported as a finding rather than filled in with a middling number."
+  }
+}

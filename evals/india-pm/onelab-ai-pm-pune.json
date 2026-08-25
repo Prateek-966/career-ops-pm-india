@@ -1,0 +1,26 @@
+{
+  "id": "onelab-ai-pm-pune",
+  "synthetic": false,
+  "company": "Onelab Ventures",
+  "title": "AI Product Manager",
+  "location": "Pune, Maharashtra",
+  "url": "https://to.indeed.com/aazzljr98r2r",
+  "source_tier": "indeed",
+  "market": "india",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "\"We are not a company that adds AI as a feature. We build products where AI is the foundation.\" Reports into founders: \"Work closely with founders, engineers, and designers\".",
+    "domain": "AI / GenAI",
+    "domain_tier": "primary",
+    "is_ai_role": true,
+    "ai_builder_or_steward": "builder",
+    "seniority": "1-3 years",
+    "roadmap_authority": "high",
+    "hard_stops": [
+      "1-3 years experience, far below an 8+ year profile",
+      "Hard institutional gate: applications only from a listed set of IIT/BITS/NIT/VIT institutions"
+    ],
+    "why_it_matters": "A genuine AI-builder role (RAG, agents, prompt/eval work) that must still score LOW because of level and a hard eligibility gate. Guards against the rubric rewarding AI keywords over fit."
+  }
+}

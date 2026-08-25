@@ -1,0 +1,21 @@
+{
+  "id": "trellix-endpoint-security-senior-pm-remote",
+  "synthetic": false,
+  "company": "Trellix",
+  "title": "Senior Product Manager",
+  "location": "Remote",
+  "url": "https://to.indeed.com/aa4wcf4s6fdm",
+  "source_tier": "indeed",
+  "market": "unknown",
+  "expect_title_filter": "pass",
+  "label": {
+    "company_type": "product",
+    "company_type_evidence": "\"7+ years of product management experience in a product led company\"; the seat leads \"the strategy, design, and development of our endpoint products\".",
+    "domain": "cybersecurity / endpoint",
+    "domain_tier": "transferable",
+    "is_ai_role": false,
+    "seniority": "7+ years PM",
+    "roadmap_authority": "high",
+    "why_it_matters": "An unlisted domain with a familiar SHAPE — B2B, technical, multi-stakeholder, enterprise. The rubric says such a role is judged on transferable evidence and never auto-downgraded for being unlisted, so the transferability_gap must be a named, arguable sentence rather than a vague low score."
+  }
+}
