@@ -7,13 +7,19 @@
 # bot still acks, dedupes and closes duplicates; new signatures wait for a
 # maintainer wave.
 name: ledger-bot
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Records CareerOps manifesto signatures into SIGNATURES.md from discussions and
+# comments. There is no public signing flow on a private fork.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original triggers:
+#   on:
+#     discussion:        { types: [created] }
+#     discussion_comment:{ types: [created] }
+#     issue_comment:     { types: [created] }
 on:
-  discussion:
-    types: [created]
-  discussion_comment:
-    types: [created]
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
 
 # La concurrencia vive a nivel de JOB: los dos jobs que escriben SIGNATURES.md
 # comparten el grupo 'ledger' (serializan entre sí); confirm-first usa grupo

@@ -5,9 +5,20 @@
 # SIGNATURES.md / al final del fichero / ≤200 chars / sin bidi/zero-width.
 # La identidad es ESTRUCTURAL (autor del PR) — la línea canónica la escribe el bot.
 name: signature-ci
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Validates CareerOps manifesto-signature PRs ("only SIGNATURES.md may change").
+# It fired on the vendoring commit — which touches SIGNATURES.md among 1,217
+# other files — and reported the import as a malformed signature. There is no
+# public signing flow on a private fork.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original trigger:
+#   on:
+#     pull_request:
+#       paths: [SIGNATURES.md]
 on:
-  pull_request:
-    paths: [SIGNATURES.md]
+  workflow_dispatch:
 
 permissions:
   contents: read

@@ -14,9 +14,17 @@ name: Auto-triage scan output
 #       legitimate scanner-provider features use).
 # It never locks the issue, so a real report can always be reopened.
 
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Auto-triages scan-output bug reports filed by users of the public project.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original trigger:
+#   on:
+#     issues:
+#       types: [opened, reopened]
 on:
-  issues:
-    types: [opened, reopened]
+  workflow_dispatch:
 
 permissions:
   issues: write

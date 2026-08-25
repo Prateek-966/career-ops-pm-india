@@ -1,7 +1,16 @@
 name: 'Close stale issues and PRs'
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Auto-closes stale issues and PRs, which a busy public tracker needs and a
+# one-person fork does not. Left enabled it would quietly close your own issues
+# after the inactivity window.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original triggers:
+#   on:
+#     schedule: [{ cron: '0 6 * * 1' }]   # Mondays 06:00 UTC
+#     workflow_dispatch:
 on:
-  schedule:
-    - cron: '0 6 * * 1' # Every Monday at 6am UTC
   workflow_dispatch:
 
 permissions:

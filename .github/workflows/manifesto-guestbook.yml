@@ -4,10 +4,19 @@
 # dedupe del ledger ya filtró duplicados, y la card ya está revalidada.
 # Regla dura: SIN totales ni contadores en el embed, jamás.
 name: manifesto-guestbook
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Publishes the CareerOps manifesto guestbook when SIGNATURES.md changes. Same
+# public signing flow as ledger-bot, which does not exist on a private fork.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original trigger:
+#   on:
+#     push:
+#       branches: [main]
+#       paths: [SIGNATURES.md]
 on:
-  push:
-    branches: [main]
-    paths: [SIGNATURES.md]
+  workflow_dispatch:
 
 permissions:
   contents: read

@@ -1,10 +1,18 @@
 name: Release Please
+# DISABLED IN THIS FORK — upstream release automation.
+#
+# release-please. This is the one that would actively misbehave rather than
+# merely fail: it triggers on every push to main, so merging would start cutting
+# version releases of this fork and opening release PRs. This fork publishes
+# nothing to npm and cuts no releases; its VERSION tracks upstream's.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original triggers:
+#   on:
+#     push:
+#       branches: [main]
+#     workflow_dispatch:
 on:
-  push:
-    branches: [main]
-  # Manual re-publish: when a release was tagged but the npm publish failed,
-  # dispatch this workflow to publish the scaffolder at its current version
-  # without cutting a new release.
   workflow_dispatch:
 
 permissions:

@@ -17,11 +17,18 @@
 # UNASSIGNED issue needs no claim at all and always stays welcome.
 name: gfi-claims
 
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Manages "good first issue" claims by outside contributors, and reaps stale
+# claims on a daily cron. There are no outside contributors here.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original triggers:
+#   on:
+#     issue_comment: { types: [created] }
+#     schedule:      [{ cron: "23 6 * * *" }]
+#     workflow_dispatch: {}
 on:
-  issue_comment:
-    types: [created]
-  schedule:
-    - cron: "23 6 * * *"
   workflow_dispatch: {}
 
 permissions:

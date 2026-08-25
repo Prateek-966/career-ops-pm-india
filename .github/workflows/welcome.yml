@@ -1,10 +1,14 @@
 name: Welcome
 
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Greets first-time contributors. career-ops is a public project with outside
+# contributors; Job-finder is one person's private checkout, so there is nobody
+# to greet. Left in place rather than deleted so it is one edit away from
+# working again if this repo ever opens to contributors: restore the
+# `pull_request_target`/`issues` triggers below.
 on:
-  pull_request_target:
-    types: [opened]
-  issues:
-    types: [opened]
+  workflow_dispatch:
 
 permissions:
   issues: write

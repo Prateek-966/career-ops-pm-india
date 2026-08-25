@@ -1,8 +1,18 @@
 name: Label PRs
 
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Applies upstream's risk labels (core-architecture / agent-behavior / docs) to
+# incoming PRs so maintainers can triage a queue of them. One person reviewing
+# their own PRs does not need the queue.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original trigger:
+#   on:
+#     pull_request_target:
+#       types: [opened, synchronize]
 on:
-  pull_request_target:
-    types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
   label:

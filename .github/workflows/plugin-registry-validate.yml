@@ -4,11 +4,21 @@ name: 'Plugin registry validate'
 # pull_request_target), read-only permissions, and NO secrets — so cloning +
 # statically auditing a submitter's plugin can never reach a token or write the
 # repo. No plugin code is executed (the manifest is parsed, the audit is static).
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Audits community plugin submissions to the curated registry. It fired on the
+# vendoring commit because the imported tree contains plugins-registry/, and
+# there are no outside submitters here to audit.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original triggers:
+#   on:
+#     pull_request:
+#       paths:
+#         - 'plugins-registry/**'
+#         - 'plugins-registry.json'
 on:
-  pull_request:
-    paths:
-      - 'plugins-registry/**'
-      - 'plugins-registry.json'  # legacy single-file location (pre-migration forks)
+  workflow_dispatch:
 
 permissions:
   contents: read

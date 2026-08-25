@@ -3,9 +3,17 @@
 # pull_request normal; aquí SOLO se usa metadata del evento — JAMÁS añadir un
 # checkout del código del fork a este workflow (riesgo de exfiltración).
 name: gh-events-feed
+# DISABLED IN THIS FORK — upstream contributor-community automation.
+#
+# Publishes upstream's community activity feed when a PR closes.
+#
+# Left in place rather than deleted so it stays readable and is one edit away
+# from working again. Original trigger:
+#   on:
+#     pull_request_target:
+#       types: [closed]
 on:
-  pull_request_target:
-    types: [closed]
+  workflow_dispatch:
 
 permissions:
   contents: read
