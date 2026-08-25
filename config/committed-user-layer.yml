@@ -6,10 +6,16 @@
 # PUBLIC template repo, where a reflexive `git add .` in someone's fork would
 # push their CV and comp expectations to the world.
 #
-# Prateek-966/Job-finder is a PRIVATE, single-person repo. Here the trade runs
-# the other way: a gitignored file does not survive a fresh clone or a new
-# container, so the setup has to be rebuilt from a PDF every time. Committing
-# it is what makes the tool usable.
+# Prateek-966/Job-finder commits two of them anyway: a gitignored file does not
+# survive a fresh clone or a new container, so the setup has to be rebuilt from a
+# PDF every time. Committing it is what makes the tool usable.
+#
+# THIS REPO IS PUBLIC. It was private when these two paths were first committed,
+# and that was the whole justification. It is not any more, so the bar has moved:
+# a path listed here is published to the world, not merely stored. Both entries
+# were re-examined under that bar and the values that could not survive it —
+# compensation.target_range, compensation.minimum, and the phone number — were
+# removed from the working tree AND from every commit in this branch's history.
 #
 # This file makes that a DECLARED decision rather than a silently weakened
 # test. Every path listed here is still reported by the guard on every run — as
@@ -19,18 +25,20 @@
 #
 # ── Before adding a path here, check all three ────────────────────────────
 #
-#   1. Is this repo still private? A private repo can be flipped public in two
-#      clicks, and a collaborator added later sees the whole history.
+#   1. Would you publish this on your own website, under your own name? That is
+#      now the literal question — the repo is public, so anything listed here is
+#      readable by anyone, including recruiters and your current employer.
 #   2. Would you mind this content in git FOREVER? Deleting a file later does
-#      not remove it from history — it needs a history rewrite.
+#      not remove it from history — it needs a history rewrite, and once the
+#      repo is public a rewrite cannot un-publish what was already fetched.
 #   3. Is it worth it? "It saves me re-uploading a PDF" is a real reason. Most
 #      user-layer files do not clear that bar.
 
 committed:
   - path: cv.md
     reason: >-
-      A CV is a document you send to strangers by design, so committing it to a
-      private repo adds essentially no exposure — and it is the single file
+      A CV is a document you send to strangers by design, so publishing it adds
+      little the candidate is not already handing out — and it is the single file
       everything else depends on. Without it, doctor.mjs reports the install
       incomplete and outreach-draft.mjs refuses to draft anything at all.
 
@@ -39,8 +47,10 @@ committed:
       Carries the archetype ladder, the markets block and the proof points —
       the PRD v2 targeting work — alongside contact details. Committing it
       means a fresh clone is immediately usable.
-      CAVEAT: it also holds `compensation.target_range` and
-      `compensation.minimum`. That is the one thing you would never show a
-      counterparty, and it is now in git history permanently. Blank those two
-      keys if that trade is not worth it to you; nothing else in the system
-      reads them except salary-gap.mjs and the negotiation modes.
+      `compensation.target_range` and `compensation.minimum` are deliberately
+      BLANK here and were scrubbed from every commit in this branch's history
+      before the repo went public: a published walk-away number is handed to
+      every counterparty before the first conversation, and it is the one field
+      in this file that can never be taken back. Fill them in locally — nothing
+      reads them except salary-gap.mjs and the negotiation modes — and do not
+      commit the values.

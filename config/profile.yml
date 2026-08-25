@@ -4,7 +4,12 @@
 #
 # Identity below is transcribed from Prateek_Sharma_Resume.pdf (2026-08-25) —
 # it matches cv.md, which is the ground truth every generated claim traces to.
-# This file is gitignored: it holds real contact details and comp expectations.
+# This file is COMMITTED on purpose (see config/committed-user-layer.yml) and
+# this repository is PUBLIC. Nothing here is private. compensation.target_range
+# and compensation.minimum are deliberately blank: a published salary floor hands
+# every counterparty your walk-away number before the conversation starts. Fill
+# them in locally if you want salary-gap.mjs and the negotiation modes to work,
+# but do not commit the values.
 
 candidate:
   full_name: "Prateek Sharma"

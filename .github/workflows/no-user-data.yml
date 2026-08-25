@@ -21,7 +21,18 @@ jobs:
     steps:
       # Needed so the script can read config/committed-user-layer.yml — this
       # fork's declared list of user-layer files it commits on purpose.
+      #
+      # Checked out at the BASE ref, not the PR head. The declaration is the
+      # thing that GRANTS exemptions, so reading it from the head lets a PR
+      # exempt itself simply by adding a path to the file in the same diff.
+      # That was an accepted trade while this repo was private and
+      # single-author; it stopped being acceptable the moment the repo went
+      # public and anyone could open a PR. Reading the base means an exemption
+      # only counts once it is already merged — i.e. once a human approved it.
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
       - uses: actions/github-script@v9
         with:
           script: |
@@ -65,14 +76,15 @@ jobs:
             // all three cannot disagree about which paths are exempt — that
             // divergence is how one of them ends up silently unenforced.
             //
-            // THREAT MODEL, stated because it is genuinely weaker than upstream's:
-            // this reads the declaration from the PR's OWN head, so a PR can
-            // grant itself an exemption. That is acceptable here — private repo,
-            // single author, and the guard exists to protect the owner from an
-            // accidental `git add .`, not from a hostile contributor. Every
-            // exemption is echoed into the CI log below so it cannot be quiet.
-            // If this repo ever takes outside contributors, re-read the
-            // declaration from the BASE ref instead.
+            // THREAT MODEL: the declaration is read from the BASE ref (see the
+            // checkout step above), so a PR cannot grant itself an exemption by
+            // adding a path to the file in the same diff. An exemption counts
+            // only once it is merged, which is to say once a human approved it.
+            // Every exemption in force is echoed into the CI log below so the
+            // set can never be quiet.
+            //
+            // The file list itself still comes from the PR (listFiles API), so
+            // fork PRs are covered exactly as before.
             let exempt = new Set();
             try {
               const decl = fs.readFileSync('config/committed-user-layer.yml', 'utf8');
