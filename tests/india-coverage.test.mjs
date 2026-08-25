@@ -20,7 +20,7 @@
 //     which then gets probed and permanently pollutes the seed file.
 
 import { pass, fail } from './helpers.mjs';
-import { normalizeRow, extractRows, filterAndDedupe, tagOffer } from '../india-scan.mjs';
+import { normalizeRow, extractRows, filterAndDedupe, tagOffer } from '../scan-ingest.mjs';
 import { deriveCompany, isNonEmployerHost, companyKey, applyAddCompany } from '../add-company.mjs';
 import { buildTitleFilter } from '../title-keywords.mjs';
 
@@ -154,7 +154,7 @@ console.log('\nIndia coverage — india-scan + add-company (PRD v2 Part B)');
 }
 
 {
-  const tagged = tagOffer({ title: 'PM', company: 'A', url: 'https://x.com/1', location: 'Bangalore, KA', jobId: 'J1' });
+  const tagged = tagOffer({ title: 'PM', company: 'A', url: 'https://x.com/1', location: 'Bangalore, KA', sourceId: 'J1' }, 'indeed', 'indeed_id');
   if (tagged.market === 'india' && tagged.note === 'market=india; source=indeed; indeed_id=J1') {
     pass('tagOffer writes the market=/source= note spelling _custom.md declares');
   } else {
@@ -163,7 +163,7 @@ console.log('\nIndia coverage — india-scan + add-company (PRD v2 Part B)');
 
   // An unrecognised location is tagged unknown and still kept — surfaced, never
   // dropped (PRD §B7).
-  const odd = tagOffer({ title: 'PM', company: 'A', url: 'https://x.com/2', location: 'Somewhere Else' });
+  const odd = tagOffer({ title: 'PM', company: 'A', url: 'https://x.com/2', location: 'Somewhere Else' }, 'indeed', 'indeed_id');
   if (odd.market === 'unknown' && odd.note.includes('market=unknown')) {
     pass('an unrecognised location is tagged market=unknown, not dropped');
   } else {

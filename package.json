@@ -41,6 +41,8 @@
     "scan:interamt": "node scan-interamt.mjs",
     "setup:pm-india": "node scripts/setup-pm-india.mjs",
     "scan:india": "node india-scan.mjs",
+    "scan:careers": "node careers-scan.mjs",
+    "outreach": "node outreach-draft.mjs",
     "seed:india": "node discover-ats.mjs --in config/india-seed-companies.yml --summary",
     "seed:india:write": "node discover-ats.mjs --in config/india-seed-companies.yml --write",
     "add-company": "node add-company.mjs",

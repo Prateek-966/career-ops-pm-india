@@ -32,7 +32,7 @@ the ATS.
 |---|---|---|---|
 | 1 | Indeed | **Adopted** | Official MCP connector (`modes/india-scan.md` → `india-scan.mjs`) |
 | 2 | ATS-direct | **Adopted — primary engine** | `config/india-seed-companies.yml` → `discover-ats.mjs` → `portals.yml` → `scan.mjs` |
-| 3 | Firecrawl | **Adopted, tightly scoped** | Seed-list companies only, where no ATS was detected |
+| 3 | Firecrawl | **Built, tightly scoped** | `modes/careers-scan.md` → `careers-scan.mjs`; domain-restricted search, seed-list companies with no ATS |
 | 4 | Instahyre / Cutshort | **Deferred — unverified** | See below; build only if Tiers 1–3 leave a measured gap |
 | — | LinkedIn | **Rejected for automation** | Manual discovery surface only |
 | — | Naukri | **Rejected for automation** | Manual discovery surface only |
@@ -106,19 +106,38 @@ filtered out; the `company_type` rubric dimension discriminates per posting.
 
 ## Tier 3 — Firecrawl for unindexed career pages ✅ (tightly scoped)
 
-**Status: adopted, with a hard scope.** The genuine gap it fills: mid-size
+**Status: built, with a hard scope.** The genuine gap it fills: mid-size
 Indian companies running custom or Zoho Recruit career portals that no
 supported ATS covers.
 
-Scope rules, all four of which must hold:
+```bash
+node careers-scan.mjs --list-targets    # seeded, and not already reached by Tier 2
+# ...run firecrawl_search per target with includeDomains, then:
+npm run scan:careers -- --stdin < results.json
+```
 
-1. Only for companies **already on the seed list** — never open-ended crawling.
-2. Only where `discover-ats.mjs` found **no ATS**.
-3. `robots.txt` and terms checked **per domain**, with the decision recorded in
-   the log below.
-4. Cached aggressively; re-crawled **weekly at most**.
+**The scope is structural, not just documented.** Firecrawl exposes SEARCH
+(`firecrawl_search`, with `includeDomains`), not a crawler, so a sweep is a
+domain-restricted search of one company's own site rather than a walk of it.
+There is no open-ended crawling available to accidentally do.
 
-Output normalises to the same `Job` shape as any provider.
+On top of that, `careers-scan.mjs` enforces the rules itself rather than
+trusting the mode file to have been followed:
+
+1. The company must be **on the seed list** — never an arbitrary domain.
+2. The company must have **no tenant in `portals.yml`**. If Tier 2 reaches it,
+   Tier 3 must not also add it, or one role enters the inbox twice under two
+   provenances.
+3. The result URL must be on an **employer domain**. An aggregator or ATS host
+   is refused outright — an ATS-hosted hit means Tier 2's probe *missed a
+   tenant*, and the fix is to seed that tenant, not to launder the posting
+   through Tier 3.
+4. `robots.txt` and terms checked **per domain**, recorded in the log below.
+5. Re-searched **weekly at most**.
+
+Output goes through the same shared ingest as every other tier
+(`scan-ingest.mjs`): same title filter, same three levels of dedupe, same
+`market=` tagging, tagged `source=firecrawl`.
 
 **Never point Firecrawl at Naukri or LinkedIn.** A managed crawler does not
 change what the target site's terms permit — it only moves the request. This is

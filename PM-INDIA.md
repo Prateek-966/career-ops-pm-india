@@ -76,7 +76,7 @@ The engine was already role-agnostic, so this is configuration and rubric work.
 |---|---|---|
 | 1 | Indeed, official MCP connector | `modes/india-scan.md` → `npm run scan:india` |
 | 2 | ATS-direct — **the backbone** | `npm run seed:india:write` |
-| 3 | Firecrawl, scoped to seed-list companies with no ATS | — |
+| 3 | Company career pages with no ATS | `modes/careers-scan.md` → `npm run scan:careers` |
 | — | LinkedIn / Naukri | **manual only**, `npm run add-company` |
 
 `india-scan.mjs` reuses `scan.mjs`'s own dedupe and append machinery rather than
@@ -109,10 +109,29 @@ so the score is inspectable rather than taken on faith.
 | Command | What it does |
 |---|---|
 | `npm run setup:pm-india` | Install the PM/India config into the user layer |
-| `npm run scan:india` | Filter + dedupe + append Indeed MCP results |
+| `npm run scan:india` | Filter + dedupe + append Indeed MCP results (Tier 1) |
 | `npm run seed:india` | Preview which seed companies resolve to an ATS |
-| `npm run seed:india:write` | Append resolved tenants to `portals.yml` |
+| `npm run seed:india:write` | Append resolved tenants to `portals.yml` (Tier 2) |
+| `npm run scan:careers` | Career pages with no ATS (Tier 3); `-- --list-targets` first |
 | `npm run add-company -- "Name"` | Seed a company and probe it for an ATS |
+| `npm run outreach` | Validate + record an outreach email — **never sends** |
+
+## Outreach
+
+`modes/outreach.md` turns a tracked role into a specific email to a specific
+person, saved as a **Gmail draft** you review and send yourself.
+
+It refuses to produce a draft — writing nothing — when `cv.md` is missing, when
+a number in the body does not appear in `cv.md`, when the contact's address has
+no `source_url` pointing at a page where the company published it, when there is
+no named addressee, or when that person has already been approached for that
+role. Those refusals are the feature: an outreach email is the only thing this
+system produces that reaches a real person, under your name, irreversibly.
+
+`tests/outreach-guards.test.mjs` fails the build if any code path reaches for
+Gmail's send, reply or forward. Creating a draft is compatible with the core
+`modes/email.md` rule — *"Never submit. Never send email. Never click send."* —
+and sending is not.
 
 Everything upstream still works unchanged: `npm run scan`, `node doctor.mjs`,
 `npm run validate:portals`, `node test-all.mjs`, and the web UI in `web/`.
