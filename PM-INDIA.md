@@ -115,6 +115,35 @@ so the score is inspectable rather than taken on faith.
 | `npm run scan:careers` | Career pages with no ATS (Tier 3); `-- --list-targets` first |
 | `npm run add-company -- "Name"` | Seed a company and probe it for an ATS |
 | `npm run outreach` | Validate + record an outreach email — **never sends** |
+| `npm run cover-letter -- payload.json` | Render a cover letter to PDF (upstream) |
+
+## Cover letters
+
+Already built upstream — `modes/cover.md` runs a 10-step flow with a JD gate,
+company research, gap detection and achievement selection from `cv.md` only,
+and `generate-cover-letter.mjs` renders it to PDF.
+
+Its fact gate is `assertFacts` from `verify-cv-facts.mjs`, and it is stricter
+than the outreach one: it blocks invented metrics **and** unsupported employers,
+titles and tools. Verified against the real CV — a letter claiming *"92% faster
+for 50,000 users… using Kubernetes"* is blocked on all three counts, while the
+same sentence with the CV's real figures passes.
+
+What this fork adds is `modes/_custom.md` → **Cover Letter Rules**, which
+`cover.md` honours via `_shared.md`:
+
+- **Which achievement leads**, chosen by the role's domain tier rather than by
+  whichever is most impressive in isolation. One achievement developed, not
+  three listed — they already have the CV.
+- **The GCC question, pre-empted.** This candidate works *at* a GCC, which cuts
+  both ways. Writing to a product company, the unspoken question is *"have you
+  actually owned a roadmap?"* — answered with CTO/CIO approval and the funding
+  cases, not by hiding the background. Writing to a GCC, knowing the operating
+  model first-hand is a real advantage most applicants lack. `unclear` asks
+  rather than guesses.
+- **Name the gap** in one sentence, before the reader finds it themselves.
+- **India specifics** — notice period read from the profile and never guessed,
+  never a compensation figure in prose, and `cv.md`'s own currencies kept.
 
 ## Outreach
 

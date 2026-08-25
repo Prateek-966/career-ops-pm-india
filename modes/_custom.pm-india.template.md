@@ -12,6 +12,7 @@
        - modes/auto-pipeline.md Step 1  -> "Evaluation Rules"
        - modes/oferta.md (Score line)   -> "Scoring Rules"
        - modes/pipeline.md Step 3e      -> "Pipeline Rules"
+       - modes/cover.md (via _shared.md) -> "Cover Letter Rules"
      ============================================================ -->
 
 ## Evaluation Rules
@@ -157,6 +158,90 @@ Standard pipeline execution, plus:
   the tracker already uses for `via=` and `posted:`.
 - A posting whose location does not normalize to a known market still gets a
   row, tagged `market=unknown`. It is never dropped for being unrecognised.
+
+## Cover Letter Rules
+
+Read by `modes/cover.md` via `modes/_shared.md`'s standing rule that every mode
+honours this file. **Additive** — the 10-step flow in `cover.md` runs unchanged;
+this adds what that flow cannot know about a PM search in India.
+
+`generate-cover-letter.mjs` already calls `assertFacts` from
+`verify-cv-facts.mjs`, which blocks on invented metrics, unsupported employers,
+titles and tools, and forbidden phrases. Do not work around it. A blocked letter
+means a claim does not trace to `cv.md` — rewrite the claim, never the gate.
+
+### Lead with the archetype the role actually is
+
+`cover.md` Step 7 selects achievements from `cv.md`. Which one leads is decided
+by the role's domain tier (`modes/_custom.md` → Evaluation Rules → Domain fit):
+
+| Role shape | Lead with |
+|---|---|
+| Platform / API | The API-first SAP-ERP migration: 10+ cloud-native apps, 70% faster execution, 5,000 users, 20+ markets. Then the greenfield API-enabled spare-parts service that replaced a 3PL. |
+| Data product | The centralised SCM data platform: 100M+ daily events, ETL latency down 40%, real-time visibility across 200+ warehouses. |
+| Supply chain / SCM | The analytics product: stock-outs down 25%, excess inventory down 15%, holding days 250 → 120. Then the scrap-sale process that produced $3M+ YoY net-new revenue. |
+| AI / GenAI | The conversational platform taken 0-to-1 to Group CTO and CIO approval, and the $700K funding case with 320% ROI. Name the LLM A/B work — it is what separates a builder from a keyword. |
+| Enterprise B2B SaaS | Adoption and retention: NPS 34 → 68, churn down 40%, 40% feature adoption in 3 months. |
+| Unlisted domain | The closest *shape*, not the closest label — B2B, technical, multi-stakeholder, systems-heavy. Then name the gap outright (see below). |
+
+One achievement, developed. Three achievements listed is a CV, and they already
+have the CV.
+
+### The GCC question is the one to pre-empt
+
+This candidate works **at** a GCC (VOIS, Vodafone's capability centre). That
+cuts both ways, and which way depends on the target's `company_type`:
+
+- **Target is a product company.** The reader's unspoken question is *"you have
+  only worked in a capability centre — have you actually owned a roadmap?"*
+  Answer it before they ask, with the evidence that settles it: securing Group
+  CTO and CIO approval for a global rollout, and building the business cases
+  that won $700K and $250K in funding. That is roadmap authority and budget
+  ownership, not delivery. Never pretend the GCC background is not there —
+  claim what it proves.
+- **Target is a GCC.** The advantage is real and specific: they already know how
+  a capability centre works — the HQ relationship, aligning stakeholders across
+  20+ markets, delivering against a roadmap owned elsewhere. Say so plainly.
+  Most applicants to a GCC have never worked in one.
+- **`unclear`.** Do not guess which letter to write. Ask in the letter, in one
+  line: *"Is this seat setting the roadmap or delivering against a global one?"*
+  It is a good question, it demonstrates the distinction is understood, and the
+  answer shapes the interview.
+
+### Name the gap
+
+Every letter states, in one sentence, the thing the reader would otherwise find
+themselves — the domain not evidenced, the scale mismatch, the missing exposure.
+Then what transfers.
+
+This is not modesty, it is credibility. A letter with no acknowledged gap reads
+as either unaware or evasive, and the reader is looking for the gap anyway. From
+`modes/_custom.md` → Transferability: *a 3 with a clear, arguable gap is more
+useful than a vague 4* — the same holds in prose.
+
+### India specifics
+
+- **Notice period.** Indian enterprise notice periods run 60-90 days and every
+  recruiter asks. State it once, factually, if the JD asks for availability.
+  Read it from `config/profile.yml` → `cover_letter.notice_period_days`; never
+  guess it, because a wrong number quoted here becomes a wrong commitment.
+- **Compensation.** Never name a figure in a cover letter. If the JD demands
+  expectations, say they are open and calibrated to the market, and hold the
+  number for a conversation. `compensation.target_range` exists for
+  `salary-gap.mjs` and the negotiation modes, not for prose.
+- **Currency and scale.** Keep `cv.md`'s own units — the CV says `$` and `EUR`
+  for work done at a multinational, and converting to `₹` for an Indian reader
+  would both misstate the record and trip `assertFacts`.
+
+### Why-moving
+
+`cover.md` asks for the exit story. It is read from `config/profile.yml` →
+`narrative.exit_story`.
+
+**If that field is empty, ask — do not invent one.** A fabricated reason for
+leaving is the single most dangerous sentence in the letter: it is asked again
+in every screen, and any inconsistency between the letter and the answer is
+noticed. This is the one gap in the profile that no template can fill.
 
 ## House Rules
 
