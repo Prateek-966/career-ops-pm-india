@@ -6,6 +6,12 @@ This is a fork of [santifer/career-ops](https://github.com/santifer/career-ops)
 Upstream's `README.md` still describes the base system and is unchanged. This
 file describes only what this fork adds, and how to start it.
 
+**Specifications.** [`docs/spec/`](docs/spec/) carries the full set — a
+[feature list](docs/spec/FEATURES.md), a [functional spec](docs/spec/FUNCTIONAL.md),
+a [technical spec](docs/spec/TECHNICAL.md) and the
+[fork architecture](docs/spec/ARCHITECTURE.md). Read this file to *use* the
+fork; read those to understand or extend it.
+
 ---
 
 ## Start here
@@ -19,7 +25,7 @@ node doctor.mjs                # tells you what is still missing
 `setup:pm-india` copies five committed templates into the paths the CLI reads.
 It never overwrites an existing file without `--force` (which keeps a `.bak`).
 
-| Template (committed) | Installed to (gitignored) |
+| Template (committed) | Installed to |
 |---|---|
 | `templates/profile.pm-india.example.yml` | `config/profile.yml` |
 | `templates/portals.pm-india.yml` | `portals.yml` |
@@ -34,6 +40,16 @@ guard is correct and this fork keeps it — but a gitignored file does not survi
 a fresh clone, and the archetype ladder, the title filter and the rubric are
 work that has to. So the work lives in `templates/` and the personal copy lives
 where git cannot see it.
+
+**Two exceptions, declared not smuggled.** `cv.md` and `config/profile.yml` ARE
+committed here, because without them a fresh clone cannot generate anything at
+all. Both are listed in [`config/committed-user-layer.yml`](config/committed-user-layer.yml)
+with a reason, all three guards read that one file so they cannot disagree, and
+the guard reports each as a warning naming the reason on every run rather than
+passing silently. **This repository is public**, so the values that could not
+survive publication — `compensation.target_range`, `compensation.minimum` and
+the phone number — are blank, and were removed from every commit in this
+branch's history. Fill them in locally; do not commit them.
 
 Then supply the two things no template can:
 
