@@ -38,6 +38,16 @@ let passed = 0;
 let failed = 0;
 let warnings = 0;
 
+// Every message passed to fail(), kept so finish() can repeat them at the very
+// end of the run. The suite prints one line per assertion — over 5,000 of them
+// — and CI log viewers, the GitHub jobs API and this repo's own
+// formatRunFailure (§72, #3035) all keep the TAIL. A single ❌ four thousand
+// lines up is therefore invisible in practice: a red windows-latest run reported
+// "5368 passed, 1 failed" with the failing assertion clipped out of every view
+// of the log, which is unattributable and un-actionable. The recap costs
+// nothing on a green run and makes a red one self-describing.
+const failures = [];
+
 /**
  * Record and print one passing test assertion.
  *
@@ -58,7 +68,7 @@ export function pass(msg) { console.log(`  ✅ ${msg}`); passed++; }
  * @param {string} msg - Human-readable failure message for the terminal log.
  * @returns {void}
  */
-export function fail(msg) { console.log(`  ❌ ${msg}`); failed++; }
+export function fail(msg) { console.log(`  ❌ ${msg}`); failed++; failures.push(String(msg)); }
 
 /**
  * Record and print one non-fatal warning.
@@ -75,8 +85,11 @@ export function warn(msg) { console.log(`  ⚠️  ${msg}`); warnings++; }
 export function results() { return { passed, failed, warnings }; }
 
 /**
- * Print the summary line and exit with the suite's exit code.
- * Moved verbatim from the tail of test-all.mjs — output must stay byte-identical.
+ * Print the failure recap and summary line, then exit with the suite's exit code.
+ *
+ * Moved from the tail of test-all.mjs; the summary line itself is kept
+ * byte-identical (tooling and docs quote it verbatim). The recap block above it
+ * is additive and only ever appears on a red run.
  */
 export function finish() {
   // A discovered suite under tests/ that uses node:test reports through node's
@@ -94,6 +107,30 @@ export function finish() {
   // stay authoritative for inline assertions; this only adds a failure source
   // that was already being computed and thrown away.
   const runnerFailed = Boolean(process.exitCode);
+
+  // Recap before the separator so the failing assertions sit inside the same
+  // tail window as the Results line. Bounded: a mass failure must not push the
+  // Results line back out of that window, which is the bug this fixes.
+  if (failures.length > 0) {
+    const RECAP_MAX = 40;
+    const CLIP = 300;
+    console.log('\n' + '='.repeat(50));
+    console.log(`❌ FAILED ASSERTIONS (${failures.length}):`);
+    for (const msg of failures.slice(0, RECAP_MAX)) {
+      const oneLine = msg.replace(/\s*\n\s*/g, ' ');
+      console.log('  • ' + (oneLine.length > CLIP ? oneLine.slice(0, CLIP) + ' …' : oneLine));
+    }
+    if (failures.length > RECAP_MAX) {
+      console.log(`  … and ${failures.length - RECAP_MAX} more (scroll up for the full list)`);
+    }
+  }
+  if (runnerFailed && failures.length === 0) {
+    // node:test reports through its own runner and never reaches fail(), so
+    // there is nothing to recap — say so rather than printing an empty block.
+    console.log('\n' + '='.repeat(50));
+    console.log('❌ A discovered node:test suite failed — its output is above, not in a recap.');
+  }
+
   console.log('\n' + '='.repeat(50));
   console.log(`📊 Results: ${passed} passed, ${failed} failed, ${warnings} warnings`
     + (runnerFailed ? ' — plus failures in a discovered node:test suite (see above)' : ''));
