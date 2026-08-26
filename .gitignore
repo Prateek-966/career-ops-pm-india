@@ -180,3 +180,6 @@ data/intake-state.json
 # commit and were never the point of the exception.
 !/cv.md
 !/config/profile.yml
+
+# Production build dir used by BUILD_DIST (see web/next.config.mjs)
+web/.next-prod/
