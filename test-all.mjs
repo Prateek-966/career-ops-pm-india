@@ -14478,8 +14478,13 @@ try {
   // Bundled plugins: discovery + import coverage + static deny-list + firewall.
   const bundled = discoverPlugins([join(ROOT, 'plugins')]);
   const ids = bundled.map(p => p.id).sort().join(',');
-  if (ids === 'apify,gmail,notion') pass('all 3 bundled reference plugins discovered (apify, gmail, notion)');
-  else fail(`bundled plugins = "${ids}" (expected apify,gmail,notion)`);
+  // firecrawl is this fork's addition: a keyed Tier 3 provider, so the hosted
+  // dashboard can reach the tier that careers-scan.mjs runs at the agent layer.
+  // Listed here rather than loosened to a length check — the point of freezing
+  // the set is that a plugin appearing unannounced is itself the finding.
+  const EXPECTED_BUNDLED = 'apify,firecrawl,gmail,notion';
+  if (ids === EXPECTED_BUNDLED) pass(`all ${bundled.length} bundled plugins discovered (${ids})`);
+  else fail(`bundled plugins = "${ids}" (expected ${EXPECTED_BUNDLED})`);
 
   let importOk = bundled.length > 0;
   for (const p of bundled) {
