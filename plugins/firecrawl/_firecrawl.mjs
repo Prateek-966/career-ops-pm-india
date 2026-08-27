@@ -36,9 +36,16 @@ export async function search({ query, includeDomains, limit, location }, opts) {
   if (!hasKey(opts?.key)) {
     throw new Error('FIRECRAWL_API_KEY not set');
   }
+  // `Number(limit) || 20` would be wrong: 0 is falsy, so an explicit
+  // `limit: 0` in portals.yml would silently become a 20-result search and
+  // spend credits the config asked not to spend. Fall back to the default only
+  // when the value is absent or not a number; clamp anything numeric.
+  const n = Number(limit);
+  const boundedLimit = Number.isFinite(n) ? Math.max(1, Math.min(100, Math.trunc(n))) : 20;
+
   const body = {
     query,
-    limit: Math.max(1, Math.min(100, Number(limit) || 20)),
+    limit: boundedLimit,
     includeDomains,
   };
   if (location) body.location = location;
