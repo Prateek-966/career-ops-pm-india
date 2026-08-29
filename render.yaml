@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: career-ops-private
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile.render
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CAREER_OPS_WEB_REQUIRE_AUTH
+        value: "true"
+      - key: CAREER_OPS_WEB_BASIC_AUTH
+        sync: false
+      - key: CAREER_OPS_WEB_ALLOWED_HOSTS
+        sync: false
+      - key: FIRECRAWL_API_KEY
+        sync: false
+      - key: APIFY_TOKEN
+        sync: false
+      - key: INDEED_APIFY_ACTOR
+        sync: false
+    disk:
+      name: career-ops-data
+      mountPath: /app
+      sizeGB: 1
