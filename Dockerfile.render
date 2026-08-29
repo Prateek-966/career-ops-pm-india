@@ -1,0 +1,27 @@
+FROM mcr.microsoft.com/playwright:v1.62.1-jammy
+
+ENV NODE_ENV=production \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    NEXT_TELEMETRY_DISABLED=1
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends rsync tini \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/career-ops
+
+COPY package.json ./
+RUN npm install --ignore-scripts --no-audit --no-fund
+
+COPY web/package.json web/package-lock.json ./web/
+RUN cd web && npm ci --ignore-scripts --no-audit --no-fund
+
+COPY . .
+RUN cd web && npm run build
+
+COPY render-start.sh /usr/local/bin/render-start
+RUN chmod 755 /usr/local/bin/render-start
+
+EXPOSE 3000
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["/usr/local/bin/render-start"]
