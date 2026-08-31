@@ -41,12 +41,24 @@ import { marketOf, UNKNOWN_MARKET, marketLabel } from "./market-map.mjs";
  * @property {string} marketLabel
  * @property {SourceTier | null} source
  * @property {CompanyType | null} companyType
+ * @property {number | null} triageScore
+ * @property {TriageBand | null} triageBand
+ * @property {TriageConfidence | null} triageConfidence
+ */
+
+/**
+ * @typedef {"review_first" | "worth_a_look" | "low" | "skip"} TriageBand
+ * @typedef {"title-only" | "full-jd" | "rejected"} TriageConfidence
  */
 
 /** @type {Set<string>} */
 const SOURCE_VALUES = new Set(["indeed", "ats", "firecrawl", "manual"]);
 /** @type {Set<string>} */
 const COMPANY_TYPE_VALUES = new Set(["gcc", "product", "unclear"]);
+/** @type {Set<string>} */
+const TRIAGE_BANDS = new Set(["review_first", "worth_a_look", "low", "skip"]);
+/** @type {Set<string>} */
+const TRIAGE_CONFIDENCE = new Set(["title-only", "full-jd", "rejected"]);
 
 /**
  * Pull `key=value` pairs out of a free-text Notes cell.
@@ -108,7 +120,21 @@ export function jobSignals(row) {
     ? /** @type {CompanyType} */ (taggedOrg)
     : null;
 
-  return { market, marketLabel: marketLabel(market), source, companyType };
+  // Triage score, written by scan-ingest's tagOffer. Absent is null, never 0 —
+  // an unscored row must not sort as "worst", and a 0 would read as a verdict
+  // rather than a missing measurement.
+  const rawScore = Number(tags.score);
+  const triageScore = Number.isFinite(rawScore) && rawScore >= 0 && rawScore <= 100 ? rawScore : null;
+
+  const taggedBand = (tags.band || "").toLowerCase();
+  const triageBand = TRIAGE_BANDS.has(taggedBand) ? /** @type {TriageBand} */ (taggedBand) : null;
+
+  const taggedConf = (tags.conf || tags.confidence || "").toLowerCase();
+  const triageConfidence = TRIAGE_CONFIDENCE.has(taggedConf)
+    ? /** @type {TriageConfidence} */ (taggedConf)
+    : null;
+
+  return { market, marketLabel: marketLabel(market), source, companyType, triageScore, triageBand, triageConfidence };
 }
 
 /** Display labels. Neutral wording — a source is a fact, not a grade. */
@@ -118,6 +144,32 @@ export const SOURCE_LABELS = {
   ats: "ATS",
   firecrawl: "Firecrawl",
   manual: "Manual",
+};
+
+/**
+ * Triage band labels. These name the NEXT ACTION, never the quality of the
+ * role — "Excellent match" would invite a coarse ranking number to be read as
+ * a fit verdict, which is the specific mistake prescore.mjs is documented to
+ * avoid. The evaluation decides whether to apply; this only decides what to
+ * open first.
+ */
+/** @type {Record<TriageBand, string>} */
+export const TRIAGE_BAND_LABELS = {
+  review_first: "Review first",
+  worth_a_look: "Worth a look",
+  low: "Low",
+  skip: "Probably skip",
+};
+
+/**
+ * How a triage score was arrived at. Shown next to the number because a
+ * title-only 100 and a full-JD 100 are not the same claim.
+ */
+/** @type {Record<TriageConfidence, string>} */
+export const TRIAGE_CONFIDENCE_LABELS = {
+  "title-only": "from title only",
+  "full-jd": "from full JD",
+  rejected: "filtered out",
 };
 
 /** @type {Record<CompanyType, string>} */

@@ -57,7 +57,11 @@ import { fileURLToPath } from 'url';
 import * as yaml from 'js-yaml';
 import { marketOf, UNKNOWN_MARKET } from './market-map.mjs';
 import { extractJdSkills, classifySkillGaps } from './jd-skill-gap.mjs';
-import { loadTitleFilter } from './scan-ingest.mjs';
+// NOTE: scan-ingest.mjs is deliberately NOT imported at module scope. It
+// imports this file (to score rows as they are ingested), so a static import
+// back would be a cycle. The only place prescore needs the title filter is its
+// own CLI, which loads it dynamically below; the ingest path passes an already
+// built `matchesTitle` through ctx and never touches scan-ingest from here.
 
 export const BANDS = [
   { min: 70, id: 'review_first', label: 'Review first' },
@@ -409,7 +413,7 @@ function selfTest() {
   process.exit(failed === 0 ? 0 : 1);
 }
 
-function main(argv) {
+async function main(argv) {
   const arg = (k) => { const i = argv.indexOf(k); return i === -1 ? null : argv[i + 1]; };
   if (argv.includes('--self-test')) return selfTest();
 
@@ -421,7 +425,10 @@ function main(argv) {
   const jdPath = arg('--jd');
   const description = jdPath && existsSync(jdPath) ? readFileSync(jdPath, 'utf-8') : '';
   let matchesTitle = null;
-  try { matchesTitle = loadTitleFilter(); } catch { /* no portals.yml — skip the check */ }
+  try {
+    ({ loadTitleFilter: matchesTitle } = await import('./scan-ingest.mjs'));
+    matchesTitle = matchesTitle();
+  } catch { matchesTitle = null; /* no portals.yml — skip the check */ }
 
   const result = scoreRole(
     { title, company: arg('--company') || '', location: arg('--location') || '', description },

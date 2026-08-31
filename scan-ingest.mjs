@@ -31,6 +31,7 @@ import { readFileSync, existsSync } from 'fs';
 import * as yaml from 'js-yaml';
 
 import { marketOf } from './market-map.mjs';
+import { scoreRole, loadArchetypes } from './prescore.mjs';
 import { buildTitleFilter } from './title-keywords.mjs';
 import {
   companyRoleDedupKey,
@@ -195,7 +196,7 @@ export function filterAndDedupe(offers, matchesTitle, snapshot) {
  * @param {string} [idLabel] Tag name for the source's own id (e.g. `indeed_id`).
  * @returns {object} A new offer with `market` and `note` set.
  */
-export function tagOffer(offer, sourceTier, idLabel) {
+export function tagOffer(offer, sourceTier, idLabel, scoreCtx = null) {
   if (!SOURCE_TIERS.includes(sourceTier)) {
     // A typo'd tier would render as an unknown badge in the UI and break the
     // source filter silently, so it is a throw rather than a pass-through.
@@ -204,7 +205,66 @@ export function tagOffer(offer, sourceTier, idLabel) {
   const market = marketOf(offer.location);
   const parts = [`market=${market}`, `source=${sourceTier}`];
   if (offer.sourceId && idLabel) parts.push(`${idLabel}=${offer.sourceId}`);
-  return { ...offer, market, note: parts.join('; ') };
+
+  // Triage score, when a scoring context was supplied. Optional on purpose:
+  // scoring reads config/profile.yml, and a caller without one (a test, a bare
+  // checkout) must still be able to ingest rows. An absent score is simply an
+  // absent tag — never a zero, which would sort every row to the bottom and
+  // look like a verdict rather than a missing measurement.
+  let triage = null;
+  if (scoreCtx) {
+    try {
+      triage = scoreRole(
+        { title: offer.title, company: offer.company, location: offer.location },
+        scoreCtx,
+      );
+      // Confidence rides WITH the score, never separately. prescore keeps the
+      // two tiers unblended on purpose — a title-only 100 and a full-JD 100 are
+      // not the same claim — which only holds if the reader is told which one
+      // this is. A bare "100" in a list reads as certainty.
+      parts.push(`score=${triage.score}`, `band=${triage.band.id}`, `conf=${triage.confidence}`);
+    } catch {
+      // Scoring must never cost a row. A row without a score is still a row.
+      triage = null;
+    }
+  }
+
+  const out = { ...offer, market, note: parts.join('; ') };
+  if (triage) {
+    out.triageScore = triage.score;
+    out.triageBand = triage.band.id;
+    out.triageSignals = triage.signals;
+    out.triageConfidence = triage.confidence;
+  }
+  return out;
+}
+
+/**
+ * Build the context scoreRole() needs, once per run rather than per row.
+ *
+ * Returns null when config/profile.yml has no archetype ladder — scoring would
+ * then rest on seniority and market alone, which ranks little and implies more
+ * than it knows. Better to emit no score than a misleading one.
+ *
+ * @param {(title: string) => boolean} [matchesTitle]
+ * @returns {object|null}
+ */
+export function buildScoreContext(matchesTitle) {
+  try {
+    const archetypes = loadArchetypes();
+    if (!archetypes.length) return null;
+    let cvText = '';
+    try { cvText = readFileSync('cv.md', 'utf8'); } catch { /* optional */ }
+    let pmYears = null;
+    try {
+      const doc = yaml.load(readFileSync('config/profile.yml', 'utf8'));
+      const v = doc?.experience?.pm_years;
+      if (Number.isFinite(Number(v))) pmYears = Number(v);
+    } catch { /* optional */ }
+    return { archetypes, cvText, pmYears, matchesTitle };
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -228,7 +288,15 @@ export function ingest(parsed, matchesTitle, snapshot, { sourceTier, idLabel } =
   }
 
   const { kept, filteredTitle, dupes } = filterAndDedupe(offers, matchesTitle, snapshot);
-  const tagged = kept.map((o) => tagOffer(o, sourceTier, idLabel));
+  // Built once per batch: loadArchetypes() reads and parses YAML, and doing
+  // that per row turns a 500-row scan into 500 file reads.
+  const scoreCtx = buildScoreContext(matchesTitle);
+  const tagged = kept
+    .map((o) => tagOffer(o, sourceTier, idLabel, scoreCtx))
+    // Highest triage score first, so the expensive evaluation is spent on the
+    // top of the list. Unscored rows keep their original relative order at the
+    // end rather than being sorted as zero.
+    .sort((a, b) => (b.triageScore ?? -1) - (a.triageScore ?? -1));
 
   /** @type {Record<string, number>} */
   const byMarket = {};

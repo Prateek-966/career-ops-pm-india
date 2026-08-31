@@ -204,3 +204,103 @@ const LONG = 'x'.repeat(250);
   if (archetypeMatch('Warehouse Forklift Operator', archetypes) === null) pass('an unrelated title matches no archetype');
   else fail('an unrelated title matched an archetype');
 }
+
+// ── Wiring into scan-ingest ──────────────────────────────────────────────
+//
+// Scoring is only worth anything if it survives the trip into the pipeline
+// row and back out into the UI. These cover the seam.
+
+import { ingest, tagOffer, buildScoreContext } from '../scan-ingest.mjs';
+import { jobSignals } from '../web/src/lib/job-signals.mjs';
+
+console.log('\n🎯 prescore — wired into ingest and readable by the UI');
+
+{
+  const ctx = { archetypes: loadArchetypes(), cvText: '', pmYears: 3.6 };
+  const tagged = tagOffer(
+    { title: 'Senior Data Product Manager', company: 'B', location: 'Pune, India', url: 'https://b.test/1' },
+    'ats', undefined, ctx,
+  );
+
+  if (/score=\d+/.test(tagged.note)) pass('tagOffer writes score= into the note tag');
+  else fail(`no score in note: ${tagged.note}`);
+  if (/band=/.test(tagged.note)) pass('tagOffer writes band=');
+  else fail('no band in note');
+  // A bare number in a list reads as certainty; the tier it came from must ride
+  // with it, because a title-only 100 and a full-JD 100 are different claims.
+  if (/conf=/.test(tagged.note)) pass('confidence rides with the score in the same tag');
+  else fail(`no conf in note: ${tagged.note}`);
+
+  // The pipeline contract: no newline may reach a markdown table cell.
+  if (!/\n/.test(tagged.note)) pass('the note stays single-line (pipeline table safe)');
+  else fail('note contains a newline');
+}
+
+// Scoring is OPTIONAL — a checkout with no profile must still ingest.
+{
+  const bare = tagOffer({ title: 'Senior Product Manager', company: 'X', location: 'Pune, India', url: 'https://x.test/1' }, 'ats');
+  if (!/score=/.test(bare.note)) pass('no score context → no score tag (not a zero)');
+  else fail('a score appeared without a context');
+  if (bare.triageScore === undefined) pass('no phantom triageScore on an unscored row');
+  else fail(`unscored row carried triageScore=${bare.triageScore}`);
+  if (/market=/.test(bare.note) && /source=/.test(bare.note)) pass('the existing market/source tags are unaffected');
+  else fail('scoring changed the pre-existing tags');
+}
+
+// Ranking: the whole point is that the batch comes back ordered.
+{
+  const rows = [
+    { title: 'Product Manager', company: 'A', location: 'Pune, India', url: 'https://a.test/1' },
+    { title: 'Senior Data Product Manager', company: 'B', location: 'Pune, India', url: 'https://b.test/2' },
+    { title: 'Associate Product Manager', company: 'C', location: 'Pune, India', url: 'https://c.test/3' },
+  ];
+  const r = ingest(rows, () => true, { seen: new Set(), seenCompanyRoles: new Set() }, { sourceTier: 'ats' });
+
+  if (r.tagged.length === 3) pass('all three rows ingested');
+  else fail(`expected 3 rows, got ${r.tagged.length}`);
+
+  const scores = r.tagged.map((o) => o.triageScore).filter((n) => typeof n === 'number');
+  if (scores.length === 0) {
+    // No profile in this checkout — scoring correctly declined rather than guessing.
+    pass('no archetype ladder → ingest declines to score rather than guessing');
+  } else {
+    const sorted = [...scores].sort((a, b) => b - a);
+    if (JSON.stringify(scores) === JSON.stringify(sorted)) pass(`ingest returns rows ranked high to low (${scores.join(' > ')})`);
+    else fail(`rows not ranked: ${scores.join(', ')}`);
+    if (r.tagged[0].title !== 'Associate Product Manager') pass('a junior row is not top of the list');
+    else fail('a junior row ranked first');
+  }
+}
+
+// The UI must read what ingest writes — one contract, two ends.
+{
+  const ctx = { archetypes: loadArchetypes(), cvText: '', pmYears: 3.6 };
+  const tagged = tagOffer(
+    { title: 'Senior Data Product Manager', company: 'B', location: 'Pune, India', url: 'https://b.test/1' },
+    'ats', undefined, ctx,
+  );
+  const sig = jobSignals({ notes: tagged.note, location: 'Pune, India' });
+
+  if (sig.triageScore === tagged.triageScore) pass('the UI parses back exactly the score ingest wrote');
+  else fail(`round-trip mismatch: wrote ${tagged.triageScore}, read ${sig.triageScore}`);
+  if (sig.triageBand === tagged.triageBand) pass('the UI parses back the band');
+  else fail(`band round-trip mismatch: ${tagged.triageBand} → ${sig.triageBand}`);
+
+  // An unscored row must be null, never 0 — a 0 would sort it below a genuinely
+  // poor row and read as a verdict rather than a missing measurement.
+  const unscored = jobSignals({ notes: 'market=india; source=ats', location: 'Pune, India' });
+  if (unscored.triageScore === null) pass('an unscored row reads as null, not 0');
+  else fail(`unscored row read as ${unscored.triageScore}`);
+
+  // A malformed value must not become a number.
+  const junk = jobSignals({ notes: 'score=banana; band=amazing', location: 'Pune, India' });
+  if (junk.triageScore === null && junk.triageBand === null) pass('malformed score/band values are rejected, not coerced');
+  else fail(`junk accepted: ${junk.triageScore} / ${junk.triageBand}`);
+}
+
+// buildScoreContext degrades rather than throwing.
+{
+  const ctx = buildScoreContext(() => true);
+  if (ctx === null || (ctx && Array.isArray(ctx.archetypes))) pass('buildScoreContext returns a context or null, never throws');
+  else fail('buildScoreContext returned something unusable');
+}
