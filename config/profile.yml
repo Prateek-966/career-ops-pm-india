@@ -41,6 +41,16 @@ candidate:
 # domain absent from this list still reaches the rubric and is judged on
 # transferable evidence (see modes/_custom.md → Domain fit / Transferability).
 # ---------------------------------------------------------------------------
+# Years in PM-TITLED roles, stated rather than computed. cv.md has three
+# overlapping date ranges (flagged in the 2026-08-26 calibration run), so a
+# figure derived from those dates would be wrong and confidently so. Used by
+# prescore.mjs to flag a JD whose stated years bar you do not clear — the most
+# frequent real blocker in that run. Total industry experience is longer; this
+# is specifically the number a JD asking for "N+ years of product management"
+# is measured against.
+experience:
+  pm_years: 3.6
+
 target_roles:
   primary:
     - "Senior Product Manager"
