@@ -11,6 +11,7 @@ import { canonStatus, scoreNum, scoreTone, statusDot } from "@/lib/format";
 import { InboxTriage } from "@/components/inbox/inbox-triage";
 import { MarketFilter } from "@/components/market-filter";
 import { SourceBadge, CompanyTypeBadge, UnknownMarketBadge } from "@/components/signal-badges";
+import { TriageBadge } from "@/components/triage-score";
 import { jobSignals, countByMarket, marketLabel } from "@/lib/job-signals.mjs";
 import { cn } from "@/lib/cn";
 
@@ -338,11 +339,16 @@ function TrackerEmpty({ market, onClearMarket }: { market: string | null; onClea
  * every line of an existing tracker.
  */
 function SignalRow({ row }: { row: Application }) {
-  const { market, source, companyType } = jobSignals(row);
+  const { market, source, companyType, triageScore, triageBand, triageConfidence } = jobSignals(row);
   const hasUnknown = market === "unknown" && (source != null || companyType != null);
-  if (!source && !companyType && !hasUnknown) return null;
+  if (!source && !companyType && !hasUnknown && triageScore === null) return null;
   return (
     <span className="mt-1 flex flex-wrap items-center gap-1.5">
+      {/* Ordered least-to-most considered, left to right: the triage rank is a
+          cheap sort key, the company type is evidence-backed, and the fit score
+          (elsewhere on the row) is the actual judgement. Putting the cheapest
+          number first stops it being read as the conclusion. */}
+      <TriageBadge score={triageScore} band={triageBand} confidence={triageConfidence} />
       <CompanyTypeBadge companyType={companyType} />
       <SourceBadge source={source} />
       <UnknownMarketBadge market={hasUnknown ? market : ""} />

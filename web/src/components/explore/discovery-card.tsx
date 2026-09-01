@@ -8,6 +8,7 @@ import { ATS_LABEL, type AtsSource, type DiscoveredOffer } from "@/lib/explore";
 import { useJobs } from "@/components/jobs/job-store";
 import { useExplore } from "./explore-provider";
 import { SourceBadge, UnknownMarketBadge } from "@/components/signal-badges";
+import { TriageBadge } from "@/components/triage-score";
 import { jobSignals } from "@/lib/job-signals.mjs";
 
 function freshness(postedAt: string): string {
@@ -94,10 +95,15 @@ export function DiscoveryCard({ offer, inPipeline, evaluatedN }: { offer: Discov
             role was found, not a grade. Only appears on offers the scanner
             actually tagged (see modes/_custom.md → Pipeline Rules). */}
         {(() => {
-          const { source, market } = jobSignals(offer);
-          if (!source && market !== "unknown") return null;
+          const { source, market, triageScore, triageBand, triageConfidence } = jobSignals(offer);
+          if (!source && market !== "unknown" && triageScore === null) return null;
           return (
             <>
+              {/* Triage rank first: it is the reason this row is where it is in
+                  the list, so it should be the first thing that explains the
+                  order. Renders nothing when unscored — an unmeasured row shows
+                  no number rather than a zero. */}
+              <TriageBadge score={triageScore} band={triageBand} confidence={triageConfidence} />
               <SourceBadge source={source} />
               <UnknownMarketBadge market={market} />
             </>
