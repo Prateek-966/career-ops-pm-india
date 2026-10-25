@@ -1,8 +1,6 @@
-import { LayoutDashboard, Compass, ListChecks, Send, Radar, BarChart3, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, Compass, ListChecks, Send, Radar, BarChart3, FileText, Settings, Search } from "lucide-react";
 import type { ComponentType, SVGProps } from "react";
 
-// Single source of truth for the app's primary destinations — shared by the
-// desktop sidebar and the mobile nav so they can never drift.
 export type NavItem = {
   href: string;
   label: string;
@@ -13,6 +11,7 @@ export type NavItem = {
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Today", icon: LayoutDashboard },
   { href: "/explore", label: "Explore", icon: Compass, chip: "New" },
+  { href: "/sources", label: "Sources", icon: Search, chip: "Private" },
   { href: "/pipeline", label: "Pipeline", icon: ListChecks },
   { href: "/followups", label: "Follow-ups", icon: Send },
   { href: "/portals", label: "Portals", icon: Radar },
